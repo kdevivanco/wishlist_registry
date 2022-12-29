@@ -1,0 +1,32 @@
+.dashboard-profile-section{
+    background-color: white;
+    border-radius: 0.7rem;
+    padding: 1rem;
+}
+
+.user-main-info{
+    display: flex;
+    flex-direction: row;
+}
+
+.user-main-info>*{
+    padding: 1rem;
+}
+
+.user-name-info{
+    font-size:1.5rem;
+}
+.add-section{
+    display: flex;
+}
+.add-link{
+    color: darkblue;
+    background-color: white;
+    border-radius: 0.7rem;
+    padding: 0.7rem;
+    margin-right: 2rem;
+}
+
+.welcome-text,.add-section, .dashboard-profile-section{
+    margin-bottom: 2rem;
+}

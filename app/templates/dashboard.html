@@ -1,0 +1,92 @@
+{% extends '1base.html' %}
+{%block body%}
+<div class="container">
+    <h2 class="welcome-text"> Welcome to Registry</h2>
+    <div class="row">
+        <div class="col-8 dashboard-lists-section">
+            <div class="add-section">
+                <a href="/create-list/{{user.id}}" class="add-link">
+                    + Create a new list!
+                </a>
+                <!--Product dropdown-->
+                <a href="/add-product" class="add-link">
+                    + Add single product 
+                </a>
+            </div>
+            <h1 class="section-title">
+                See what other users are wishing for...
+            </h1>
+            <div class="other-post-box">
+                <!--for loop para los otros PRODUCTOS -->
+                <h3 class="post-title">user_name just added a product_name to list list_name</h3>
+                <img src="/" alt="product_picture" class="product-pic"></img>
+                <p class="product-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni, error?</p>
+                <p class="post-date">created_at</p>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="dashboard-profile-section">
+                <div class="user-main-info">
+                    <h2 class="user-name-info">
+                        {{user.first_name}} {{user.last_name}}
+                    </h2>
+                    <div class="user-pic-info">
+                        <img src="/" alt="profile_picture">
+                    </div>
+                </div>
+                <div class="user-main-stats">
+                    <p>
+                        Wishlists: wishlist_count
+                    </p>
+                    <p>
+                        Products: products_count
+                    </p>
+                </div>
+            </div>
+            <div class="user-main-saved">
+                <div class="user-main-lists">
+                    <h3 class="user-main-subtitle">Your Wishlists</h3>
+                    <!--For Loop con wishlists del usuario-->
+                    <div class="wishlist-box">
+                        <img src="#" alt="wishlist-img" class="list-img">
+                        <div class="list-info-col">
+                            <a href="#" class="list-title">my_wedding_wishlist</a>
+                            <div class="list-description"></div>
+                            <p class="list-product-count">Products: product_count</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-liked-products">
+                    <h3 class="user-main-subtitle">Products you like</h3>
+                    <!--For Loop con wishlists del usuario-->
+                    <div class="product-box">
+                        <img src="#" alt="product-img" class="product-img">
+                        <div class="product-info-col">
+                            <a href="#" class="product-title">some_liked_product</a>
+                            <div class="product-price">$_13_._00</div>
+                            <p class="product_creator">product_user_first_name</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-liked-lists">
+                    <h3 class="user-main-subtitle">Wishlist you like</h3>
+                    <!--For Loop con wishlists del usuario-->
+                    <div class="wishlist-box">
+                        <img src="#" alt="wishlist-img" class="list-img">
+                        <div class="list-info-col">
+                            <a href="#" class="list-title">my_wedding_wishlist</a>
+                            <div class="list-description"></div>
+                            <p class="list-product-count">Products: product_count</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+
+    
+</div>
+
+{%endblock%}
