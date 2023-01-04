@@ -1,0 +1,32 @@
+{%extends '1base.html'%}
+
+
+{%block body%}
+<div class="container">
+    <div class="wishlist-main-inf-cont">
+        <h2  class="wlist-name">{{wlist.name.upper()}}</h2>
+        <p class="wlist-description">{{wlist.description}}</p>
+        <p>Created by: {{user.first_name}} {{user.last_name}}</p>
+        <p  class="wlist-end-date">{{wlist.text}}</p>
+        <p>
+            This wishlist ends on... {{wlist.end_date}}
+        </p>
+    </div>
+    <div class="wlist-products-box">
+        {%for product in wlist_products%}
+        <div class="product-box">
+            
+            <img src="{{product.url}}" alt="" style="width: 150px;">
+            <h3 class="product-name">{{product.product_name}}</h3>
+            <p class="product-price">s/.{{product.price}}.00</p>
+        </div>
+        {%endfor%}
+    </div>
+    {%if wlist.creator.id == user.id%}
+    <a href="/create-product/{{wlist.id}}">Add a product</a>
+    
+    {%endif%}
+</div>
+
+
+{%endblock%}

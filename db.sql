@@ -39,8 +39,9 @@ CREATE TABLE IF NOT EXISTS `wishlist`.`wishlists` (
   `text` TEXT NULL,
   `privacy` VARCHAR(255) NOT NULL,
   `created_at` DATETIME NOT NULL,
-  `updated_at` DATETIME NOT NULL,
+  `end_date` DATETIME NOT NULL,
   `creator_id` INT NOT NULL,
+  `creator_id` BLOB,
   PRIMARY KEY (`id`, `creator_id`),
     FOREIGN KEY (`creator_id`)
     REFERENCES `wishlist`.`users` (`id`)

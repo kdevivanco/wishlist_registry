@@ -5,113 +5,86 @@ from app import app
 from flask_bcrypt import Bcrypt        
 from app.models.users import User
 import time
+import pdb
+from app.models.products import Product
 bcrypt = Bcrypt(app)
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$') 
 
 
 class Wishlist:
-
     def __init__(self,data):
         self.id = data['id']
-        self.author = data['author']
-        self.quote = data['quote']
-        self.creator_id = data['creator_id']
+        self.name = data['name']
+        self.description = data['description']
+        self.text = data['text']
+        self.privacy = data['privacy']
         self.created_at = data['created_at']
-        self.updated_at = data['updated_at']
-        self.favorites = []
+        self.end_date = data['end_date']
+        self.creator_id = data['creator_id']
+        self.img = data['img']
+        self.products = []
+        self.product_count = 0
 
 
     #Valida el formulario para crear un quote
     @classmethod
     def validate(cls,form_data):
         is_valid = True
-        if len(form_data['author']) < 3:
-            flash("Author name must be at least 3 characters.",'error')
+        if len(form_data['name']) < 8:
+            flash("Wishlist name must be at least 8 characters",'error')
             is_valid = False
-        if len(form_data['quote']) < 10:
-            flash("Quote must be at least 10 characters.",'error')
+        if len(form_data['description']) < 10:
+            flash("Description must be at least 10 characters.",'error')
             is_valid = False
+        #FALTA AGREGAR VALIDACION DE ENDDATE
         return is_valid
 
-    #Protege la pagina de rutas ingresadas manualmente por el usuario
-    @classmethod
-    def route_protection(cls,id,user_id):
-        #PROTECCION DE RUTA 1: si el usuario manualmente crea la ruta y ese id no existe para quotes: 
+    #PROTECCION DE RUTAS
 
-        query = ''' SELECT id from quotes'''
-
-        data = {
-            "id": id
-        }
-        results = connectToMySQL('quotes_belt1').query_db(query,data)
-        quotes_id = []
-        for quote_id in results:
-            quotes_id.append(quote_id['id'])
-        
-        if int(id) not in quotes_id:
-            flash('Invalid route', 'error')
-            return False
-
-        #PROTECCION DE RUTA 2: primero debemos asegurarnos que el quote pertenezca al usuario 
-        query = '''SELECT creator_id
-                    FROM quotes 
-                    where id = %(id)s; '''
-
-        data = {
-            "id": id
-        }
-        results = connectToMySQL('quotes_belt1').query_db(query,data)
-        creator_id = results[0]['creator_id']
-
-        if user_id != creator_id:
-            flash('You cannot modify a quote that has not been submitted by you','error')
-            return False
-        
-        return True
-        
-
-    #Inserta el nuevo quote a la base de datos
-    #crea un objeto de clase Quote con un atributo creator de la clase User
+    
     @classmethod 
     def create_new(cls,form_data,user_id):
         
 
         query = '''
-                INSERT INTO quotes ( author , quote ,creator_id, created_at, updated_at ) 
-                VALUES ( %(author)s , %(quote)s ,%(creator_id)s, NOW() , NOW());
+                INSERT INTO wishlists ( name , description, text, privacy, created_at, end_date, creator_id) 
+                VALUES ( %(name)s , %(description)s ,%(text)s, %(privacy)s, NOW() , %(end_date)s, %(creator_id)s);
                 '''
 
         data = {
-                "author": form_data["author"],
-                "quote" : form_data["quote"],
+                "name": form_data['name'],
+                "description" : form_data['description'],
+                "text": form_data['text'],
+                "privacy" : form_data['privacy'],
+                "end_date": form_data['end_date'],
                 "creator_id" : user_id,
             }
 
-        quote_id = connectToMySQL('quotes_belt1').query_db(query,data)  
-        quote = Quote.classify_quote(quote_id) #Llama a la funcion que vuelve Quote en una clase con attrb creator de clase User
+        list_id = connectToMySQL('wishlist').query_db(query,data)  
+        wlist = Wishlist.classify(list_id) #Llama a la funcion que vuelve Quote en una clase con attrb creator de clase User
         
-        return quote
+        return wlist
 
     #Construye el objeto Quote, este metodo es llamado por create_new
     @classmethod
-    def classify_quote(cls,id): #construye quote como objeto de clase Quote
+    def classify(cls,id): #construye quote como objeto de clase Quote
         
-        query = '''SELECT * FROM quotes 
-                join users on users.id = quotes.creator_id
-                where quotes.id = %(id)s '''
+        query = '''SELECT * FROM wishlists 
+                join users on users.id = wishlists.creator_id
+                where wishlists.id = %(id)s '''
 
         data = {
             "id": id
         }
-        results = connectToMySQL('quotes_belt1').query_db(query,data)
+
+        results = connectToMySQL('wishlist').query_db(query,data)
         if results == False:
-            flash('Something went wrong', 'error')
             print('no quote matches id')
             return False
         result = results[0]
 
-        quote = cls(result)
+        wlist = cls(result)
         creator = User({ #atributo de quote
             'id': result['users.id'],
             'first_name': result['first_name'],
@@ -119,11 +92,49 @@ class Wishlist:
             'email': result['email'],
             'password': result['password'],
             'created_at': result['users.created_at'],
-            'updated_at': result['users.updated_at']
+            'updated_at': result['updated_at']
         })
-        quote.creator = creator
+        wlist.creator = creator
+
+        wlist.products = Product.get_wishlist_products(id)
+    
+        for product in wlist.products:
+            wlist.product_count +=1
         
-        return quote
+        return wlist
+
+    #TODOS LOS WISHLSITS DE UN USUARIO: 
+
+    @classmethod
+    def get_all_from_user(cls,creator_id):
+        query = '''select id from wishlists where creator_id = %(creator_id)s'''
+
+        data = {
+            "creator_id": creator_id
+        }
+
+        results = connectToMySQL('wishlist').query_db(query,data)
+
+        if len(results) == 0 or results == False:
+            print('no list matches id')
+            return []
+        result = results[0]
+        lists =[]
+        creator = User.get_one(creator_id)
+
+        creator.list_count = 0
+        creator.created_product_count =0
+        for wlist_id in results:
+            creator.list_count +=1
+            lists.append(cls.classify(wlist_id['id']))
+            
+        for wlist in lists:
+            creator.created_product_count += wlist.product_count
+
+        creator.lists = lists
+        
+        return creator
+
 
     #Crea un nuevo favorito a en la base de datos
     @classmethod
@@ -137,7 +148,7 @@ class Wishlist:
                 "user_id": user_id,
                 "quote_id" : quote_id
             }
-        return connectToMySQL('quotes_belt1').query_db(query,data) 
+        return connectToMySQL('wishlist').query_db(query,data) 
 
     #Devuelve todos los quotes favoritos del usuario
     @classmethod
@@ -154,7 +165,7 @@ class Wishlist:
         }
 
         #results es una lista de todos los ids de los quotes favoritos del usuario
-        results = connectToMySQL('quotes_belt1').query_db(query,data)
+        results = connectToMySQL('wishlist').query_db(query,data)
         favorite_quotes = []
         if results == False:
             return favorite_quotes #evita que la lista itere si esque esta vacia para evitar un error
@@ -183,7 +194,7 @@ class Wishlist:
         }
 
         #results es una lista de todos los ids de los quotes no-favoritos del usuario
-        results = connectToMySQL('quotes_belt1').query_db(query,data)
+        results = connectToMySQL('wishlist').query_db(query,data)
         quotable_quotes = []
 
         if quotable_quotes == 0:
@@ -211,7 +222,7 @@ class Wishlist:
         }
 
         #results es una lista de todos los ids de los quotes creados por el usuario
-        results = connectToMySQL('quotes_belt1').query_db(query,data)
+        results = connectToMySQL('wishlist').query_db(query,data)
         created_quotes = []
         for quote_id in results:
             quote = Quote.classify_quote(quote_id['id'])
@@ -236,7 +247,7 @@ class Wishlist:
             'id' : id
         }
 
-        result = connectToMySQL('quotes_belt1').query_db(query,data)
+        result = connectToMySQL('wishlist').query_db(query,data)
         if not result:
             flash('something went wrong','danger')
             return False
@@ -257,7 +268,7 @@ class Wishlist:
         }
 
         flash('Removed from favorites!','success')
-        return connectToMySQL('quotes_belt1').query_db(query,data)
+        return connectToMySQL('wishlist').query_db(query,data)
 
 
     #Borra un quote creado por el usuario
@@ -271,7 +282,7 @@ class Wishlist:
         }
 
         flash('Deleted quote!','success')
-        return connectToMySQL('quotes_belt1').query_db(query,data)
+        return connectToMySQL('wishlist').query_db(query,data)
     
 
 

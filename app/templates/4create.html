@@ -4,38 +4,34 @@
 {%block body%}
 
 <div class="container">
-    <a style="text-align: right;" href="/quotes">Back to dashboard</a>
+    <a style="text-align: right;" href="/">Back to dashboard</a>
     
     <div class="create mt-5" style="width: 20rem;">
         <h3>Create your Wishlist!</h3>
-        <form method="post" enctype="multipart/form-data">
-            {{ img_form.hidden_tag()}}
-            {% for error in img_form.photo.errors%}
-            <span style="color:red">{{error}}</span>
-            {%endfor%}
-
-            <div class="row justify-content-center">
-                <div class="col-auto">
-                    {{img_form.photo(class="form-control")}}
-                </div>
-                <div class="col-auto">
-                    {{img_form.submit(class="btn btn-success")}}
-                </div>
-            </div>
-        </form>
         <form action="/create-list/{{user.id}}" method="POST">
             <div class="mb-3">
-                <label for="author" class="form-label">Author</label>
-                <input required type="author" name="author"  class="form-control" id="author" required>
+                <label for="name" class="form-label">Wishlist Name</label>
+                <input required type="text" name="name"  class="form-control" id="author" required>
             </div>
             <div class="mb-3">
-                <label for="author" class="form-label">Author</label>
-                <input required type="author" name="author"  class="form-control" id="author" required>
+                <label for="description" class="form-label">Description</label>
+                <input required type="text" name="description"  class="form-control" id="author" placeholder= "write a short description" required>
             </div>
             <div class="mb-3">
-                <label for="quote" class="form-label">Quote:</label>
-                <textarea required type="text" name="quote" class="form-control" id="quote"  rows="3" required></textarea>
-            </div>
+                <label for="text" class="form-label">Message</label>
+                <input required type="text" name="text"  class="form-control" id="author" placeholder= "Tell people more about this list!" required>
+            </div> <!--CAMBIAR POR TEXT AREA-->
+            <div class="mb-3">
+                <label for="end_date" class="form-label">When does this list expire:</label>
+                <input required type="date" name="end_date"  class="form-control" id="author" placeholder= "Tell people more about this list!" required>
+            </div> 
+            <div class="mb-3">
+                <label  class="form-label">Privacy</label>
+                <select class="form-select" name="privacy" aria-label="Default select example">
+                    <option name="privacy" value="private">Private</option>
+                    <option name="privacy" value="public">Public</option>
+                </select>
+            </div> 
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         {%if filename%}

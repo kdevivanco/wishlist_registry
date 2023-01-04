@@ -6,6 +6,7 @@ from app.decorators import login_required
 from app.controllers.images import UploadForm,photos
 from app import app
 import pdb
+from app.models.products import Product
 
 
 lists = Blueprint('lists', __name__, template_folder='templates')
@@ -22,39 +23,43 @@ def repited_variables(): #cree una funcion para estas dos variables que se repit
 def show_lists():
     log,user = repited_variables()
     user_id = user['id']
+    creator = Wishlist.get_all_from_user(user_id)
+    other_products = Product.get_all_but_user(user_id)
+    #pdb.set_trace()
+    return render_template('dashboard.html',log = log,user = user,creator = creator, op = other_products)
 
-    return render_template('dashboard.html',log = log,user = user)
 
-
-@lists.route('/<filename>')
-def get_file(filename):
-    return send_from_directory(app.config['UPLOADED_PHOTOS_DEST'],filename)
-
-#Cargar CREATE page
-@lists.route('/create-list/<user_id>', methods=['GET', 'POST'])
+#SHOW CREATE PAGE
+@lists.route('/create-list/<user_id>', methods=['GET'])
 @login_required
-def show_create_list(user_id):
+def show_create(user_id):
     log,user = repited_variables()
-    img_form = UploadForm()
-    if img_form.validate_on_submit():
-        filename = photos.save(img_form.photo.data)
-        pdb.set_trace()
-    else:
-        file_url = None
-    return render_template('4create.html',user=user,img_form = img_form,filename=filename)
 
 
-#CREAR NUEVO QUOTE
-@lists.route('/create', methods=['POST'])
+    return render_template('4create.html',user=user)
+
+# CREATE pOST
+@lists.route('/create-list/<user_id>', methods=['POST'])
 @login_required
-def create_quote():
+def create_wlist(user_id):
     log,user = repited_variables()
+    wlist = Wishlist.create_new(request.form,user_id)
+    list_id = wlist.id
+    wlist_path = f'/list/{list_id}'
+    return redirect(wlist_path)
+
+#VISUALIZAR UNA SOLA LISTA
+@lists.route('/list/<list_id>')
+@login_required
+def view_wlist(list_id):
+    log,user = repited_variables()
+    wlist = Wishlist.classify(list_id)
+    wlist_products = Product.get_wishlist_products(list_id)
     
-    if not Quote.validate(request.form):
-        return redirect('/lists')
-    Quote.create_new(request.form,user['id'])
+    return render_template('single_list.html',log = log,wlist = wlist,user = user,wlist_products = wlist_products) 
 
-    return redirect('/lists')
+
+
 
 #AÑADIR NUEVO FAVORITO
 @lists.route('/addfavorite/<quote_id>')

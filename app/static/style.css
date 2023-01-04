@@ -1,3 +1,12 @@
+body{
+    font-family: 'Nanum Gothic', sans-serif;
+}
+
+a{
+    text-decoration: none;
+}
+
+
 .dashboard-profile-section{
     background-color: white;
     border-radius: 0.7rem;
@@ -29,4 +38,66 @@
 
 .welcome-text,.add-section, .dashboard-profile-section{
     margin-bottom: 2rem;
+}
+/*DASHBOARD OTHER PRODUCTS SECTION*/
+
+.my-row{
+    display: flex;
+    flex-wrap: wrap;
+}
+.product-pic{
+    width: 90px;
+}
+
+.other-post-box{
+    background-color: white;
+    margin:1rem;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    width: 20%;
+    height: 20rem;
+    border-radius: 0.5rem;
+    justify-content: space-between;
+}
+
+
+
+
+
+/* SINGLE LIST STYLE */
+
+
+.wlist-name{
+    font-size: 3rem;
+    color: #f5f0ea;
+    font-weight: 800;
+}
+.wishlist-main-inf-cont{
+    background-color:#485a37;
+    padding: 2rem;
+}
+
+.product-box{
+    background-color: white;
+    border-radius: 1rem;
+    width: 15rem;
+    margin: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding:1rem;
+}
+
+.product-box>*{
+    margin-bottom: 0.5rem;
+}
+
+.product-name{
+    font-size: 1rem;
+    font-weight:700;
+}
+
+.wlist-products-box{
+    display: flex;
 }

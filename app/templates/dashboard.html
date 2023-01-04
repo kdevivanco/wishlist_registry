@@ -6,22 +6,31 @@
         <div class="col-8 dashboard-lists-section">
             <div class="add-section">
                 <a href="/create-list/{{user.id}}" class="add-link">
-                    + Create a new list!
-                </a>
-                <!--Product dropdown-->
-                <a href="/add-product" class="add-link">
-                    + Add single product 
+                    + Add a new list!
                 </a>
             </div>
             <h1 class="section-title">
                 See what other users are wishing for...
             </h1>
-            <div class="other-post-box">
-                <!--for loop para los otros PRODUCTOS -->
-                <h3 class="post-title">user_name just added a product_name to list list_name</h3>
-                <img src="/" alt="product_picture" class="product-pic"></img>
-                <p class="product-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni, error?</p>
-                <p class="post-date">created_at</p>
+            <div class="my-row">
+                {%for product in op%}
+                <div class="other-post-box">
+                    <p class="post-title">{{product.product_name}}</p>
+                    <img src="{{product.url}}" alt="product_picture" class="product-pic"></img>
+                    <p class="post-creator">Created by: <a href="/user/{{product.creator.id}}">{{product.creator.first_name}} {{product.creator.last_name}}</a></p>
+                    <form action="/">
+                        Add to wishlist...
+                        <select name="wishlist" id="">
+                            {%for list in creator.lists%}
+                            <option value="{{list.id}}" disabled selected>select wihslist</option>
+                            <option value="{{list.id}}">{{list.name}}</option>
+                            {%endfor%}
+                        </select>
+                        <button type="submit">Add</button>
+                    </form>
+
+                </div>
+                {%endfor%}
             </div>
         </div>
         <div class="col-4">
@@ -36,10 +45,10 @@
                 </div>
                 <div class="user-main-stats">
                     <p>
-                        Wishlists: wishlist_count
+                        Wishlists: {{creator.list_count}}
                     </p>
                     <p>
-                        Products: products_count
+                        Products: {{creator.created_product_count}}
                     </p>
                 </div>
             </div>
@@ -47,29 +56,19 @@
                 <div class="user-main-lists">
                     <h3 class="user-main-subtitle">Your Wishlists</h3>
                     <!--For Loop con wishlists del usuario-->
+                    {%for list in creator.lists%}
                     <div class="wishlist-box">
                         <img src="#" alt="wishlist-img" class="list-img">
                         <div class="list-info-col">
-                            <a href="#" class="list-title">my_wedding_wishlist</a>
-                            <div class="list-description"></div>
-                            <p class="list-product-count">Products: product_count</p>
+                            <a href="/list/{{list.id}}" class="list-title">{{list.name}}</a>
+                            <p class="list-description">{{list.description}}</p>
+                            <p class="list-product-count">Products: {{list.product_count}}</p>
                         </div>
                     </div>
+                    {%endfor%}
                 </div>
-                <div class="user-liked-products">
-                    <h3 class="user-main-subtitle">Products you like</h3>
-                    <!--For Loop con wishlists del usuario-->
-                    <div class="product-box">
-                        <img src="#" alt="product-img" class="product-img">
-                        <div class="product-info-col">
-                            <a href="#" class="product-title">some_liked_product</a>
-                            <div class="product-price">$_13_._00</div>
-                            <p class="product_creator">product_user_first_name</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="user-liked-lists">
-                    <h3 class="user-main-subtitle">Wishlist you like</h3>
+                <div class="user-participating-lists">
+                    <h3 class="user-main-subtitle">Wishlist you're in</h3>
                     <!--For Loop con wishlists del usuario-->
                     <div class="wishlist-box">
                         <img src="#" alt="wishlist-img" class="list-img">
