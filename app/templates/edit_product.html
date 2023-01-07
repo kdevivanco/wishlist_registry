@@ -1,0 +1,43 @@
+{%extends '1base.html'%}
+
+
+{%block body%}
+
+<div class="container">
+    <a style="text-align: right;" href="/dashboard">Back to dashboard</a>
+    
+    <div class="create mt-5" style="width: 20rem;">
+        <h3>Create your Wishlist!</h3>
+        <form action="/create-product/{{list_id}}" method="POST">
+            <div class="mb-3">
+                <label for="product_name" class="form-label">Product Name</label>
+                <input required type="text" name="product_name"  class="form-control" id="author" required>
+            </div>
+            <div class="mb-3">
+                <label for="link" class="form-label">Copy product link:</label>
+                <input required  type="link" name="link"  class="form-control" id="author" placeholder= "Tell people more about this product!" >
+            </div> 
+            <div class="mb-3">
+                <label for="brand" class="form-label">Brand:</label>
+                <input required  type="brand" name="brand"  class="form-control" id="author" placeholder= "Tell people more about this product!" >
+            </div> 
+            <div class="mb-3">
+                <label for="img_url" class="form-label">Img url</label>
+                <input required  type="text" name="img_url"  class="form-control" id="author" placeholder= "Paste img url" >
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input  type="text" name="description"  class="form-control" id="author" placeholder= "Write a short description" >
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price:</label>
+                <input  type="number" name="price"  class="form-control" id="author" required>  
+            </div>  <!--VALIDAR PRECIO COMO INT MAYOR A 0-->
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        
+    </div>
+
+</div>
+
+{%endblock%}

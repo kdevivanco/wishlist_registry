@@ -22,9 +22,11 @@ class Wishlist:
         self.created_at = data['created_at']
         self.end_date = data['end_date']
         self.creator_id = data['creator_id']
-        self.img = data['img']
+        self.img_url = data['img_url']
         self.products = []
         self.product_count = 0
+        self.requests = []
+        self.participants = []
 
 
     #Valida el formulario para crear un quote
@@ -48,20 +50,21 @@ class Wishlist:
         
 
         query = '''
-                INSERT INTO wishlists ( name , description, text, privacy, created_at, end_date, creator_id) 
-                VALUES ( %(name)s , %(description)s ,%(text)s, %(privacy)s, NOW() , %(end_date)s, %(creator_id)s);
+                INSERT INTO wishlists ( name , description, text, privacy, img_url, created_at, end_date, creator_id) 
+                VALUES ( %(name)s , %(description)s ,%(text)s, %(privacy)s, %(img_url)s, NOW() , %(end_date)s, %(creator_id)s);
                 '''
 
         data = {
                 "name": form_data['name'],
                 "description" : form_data['description'],
+                'img_url': form_data['img_url'],
                 "text": form_data['text'],
                 "privacy" : form_data['privacy'],
                 "end_date": form_data['end_date'],
                 "creator_id" : user_id,
             }
 
-        list_id = connectToMySQL('wishlist').query_db(query,data)  
+        list_id = connectToMySQL('wishlist2').query_db(query,data)  
         wlist = Wishlist.classify(list_id) #Llama a la funcion que vuelve Quote en una clase con attrb creator de clase User
         
         return wlist
@@ -78,12 +81,11 @@ class Wishlist:
             "id": id
         }
 
-        results = connectToMySQL('wishlist').query_db(query,data)
+        results = connectToMySQL('wishlist2').query_db(query,data)
         if results == False:
             print('no quote matches id')
             return False
         result = results[0]
-
         wlist = cls(result)
         creator = User({ #atributo de quote
             'id': result['users.id'],
@@ -92,11 +94,14 @@ class Wishlist:
             'email': result['email'],
             'password': result['password'],
             'created_at': result['users.created_at'],
-            'updated_at': result['updated_at']
+            'updated_at': result['updated_at'],
+            'img_url': result['users.img_url']
         })
         wlist.creator = creator
 
         wlist.products = Product.get_wishlist_products(id)
+        wlist.requests  = cls.get_requests(id)
+        wlist.participants = cls.get_participants(id)
     
         for product in wlist.products:
             wlist.product_count +=1
@@ -113,7 +118,7 @@ class Wishlist:
             "creator_id": creator_id
         }
 
-        results = connectToMySQL('wishlist').query_db(query,data)
+        results = connectToMySQL('wishlist2').query_db(query,data)
 
         if len(results) == 0 or results == False:
             print('no list matches id')
@@ -136,20 +141,80 @@ class Wishlist:
         return creator
 
 
-    #Crea un nuevo favorito a en la base de datos
+
     @classmethod
-    def add_favorite(cls,user_id,quote_id): #inserta el viaje a la tabla all_quotes
+    def get_requests(cls,wishlist_id):
+        query = ''' 
+                SELECT participant_id from participants
+                where wishlist_id = %(wishlist_id)s and status = 'requested'
+                '''
+        data = {
+            'wishlist_id': wishlist_id
+        }
+        results = connectToMySQL('wishlist2').query_db(query,data) 
+
+        if results == []:
+            return 
+
+        participants = []
+        for participant in results:
+            participants.append(User.get_one(participant['participant_id']))
+
+        return participants
+
+    @classmethod
+    def get_participants(cls,wishlist_id):
+        query = ''' 
+                SELECT participant_id from participants
+                where wishlist_id = %(wishlist_id)s and status = 'accepted'
+                '''
+        data = {
+            'wishlist_id': wishlist_id
+        }
+        results = connectToMySQL('wishlist2').query_db(query,data) 
+
+        if results == []:
+            return 
+
+        participants = []
+        for participant in results:
+            participants.append(User.get_one(participant['participant_id']))
+
+        return participants
+
+
+
+    #Crea un request de un usuario no creador para unirse al wishlist
+    @classmethod
+    def request_to_join(cls,participant_id,wishlist_id): #inserta el viaje a la tabla all_quotes
         query = '''
-                INSERT INTO favorites ( user_id , quote_id ) 
-                VALUES ( %(user_id)s , %(quote_id)s);
+                INSERT INTO participants ( participant_id , wishlist_id, status ) 
+                VALUES ( %(participant_id)s , %(wishlist_id)s, "requested");
                 '''
 
         data = {
-                "user_id": user_id,
-                "quote_id" : quote_id
+                "participant_id": participant_id,
+                "wishlist_id" : wishlist_id
             }
-        return connectToMySQL('wishlist').query_db(query,data) 
+        return connectToMySQL('wishlist2').query_db(query,data) 
 
+    @classmethod
+    def respond_request(cls, participant_id,wishlist_id,status):
+        query = '''
+                UPDATE participants
+                SET status = %(status)s
+                WHERE participant_id = %(participant_id)s and wishlist_id = %(wishlist_id)s;
+                '''
+
+        data = {
+                "status": status,
+                "participant_id": participant_id,
+                "wishlist_id" : wishlist_id
+            }
+        
+        return connectToMySQL('wishlist2').query_db(query,data) 
+
+    
     #Devuelve todos los quotes favoritos del usuario
     @classmethod
     def get_favorites(cls,user_id): 
@@ -165,7 +230,7 @@ class Wishlist:
         }
 
         #results es una lista de todos los ids de los quotes favoritos del usuario
-        results = connectToMySQL('wishlist').query_db(query,data)
+        results = connectToMySQL('wishlist2').query_db(query,data)
         favorite_quotes = []
         if results == False:
             return favorite_quotes #evita que la lista itere si esque esta vacia para evitar un error
@@ -194,7 +259,7 @@ class Wishlist:
         }
 
         #results es una lista de todos los ids de los quotes no-favoritos del usuario
-        results = connectToMySQL('wishlist').query_db(query,data)
+        results = connectToMySQL('wishlist2').query_db(query,data)
         quotable_quotes = []
 
         if quotable_quotes == 0:
@@ -222,7 +287,7 @@ class Wishlist:
         }
 
         #results es una lista de todos los ids de los quotes creados por el usuario
-        results = connectToMySQL('wishlist').query_db(query,data)
+        results = connectToMySQL('wishlist2').query_db(query,data)
         created_quotes = []
         for quote_id in results:
             quote = Quote.classify_quote(quote_id['id'])
@@ -232,27 +297,34 @@ class Wishlist:
     
     #Edita un quote 
     @classmethod
-    def edit(cls,form_data,id):
+    def edit(cls,id,form_data):
 
         query = '''
-                UPDATE quotes
-                SET author = %(author)s,
-                quote = %(quote)s,
-                updated_at = NOW()
+                UPDATE wishlists
+                SET name = %(name)s,
+                description = %(description)s,
+                text = %(text)s,
+                img_url = %(img_url)s,
+                end_date = %(end_date)s,
+                privacy = %(privacy)s
                 where id = %(id)s'''
 
         data = {
-            'author' : form_data['author'],
-            'quote' : form_data['quote'],
+            'name' : form_data['name'],
+            'description' : form_data['description'],
+            'text' : form_data['text'],
+            'img_url' : form_data['img_url'],
+            'end_date' : form_data['end_date'],
+            'privacy' : form_data['privacy'],
             'id' : id
         }
 
-        result = connectToMySQL('wishlist').query_db(query,data)
+        result = connectToMySQL('wishlist2').query_db(query,data)
         if not result:
             flash('something went wrong','danger')
             return False
         
-        flash('Quoted edited','success')
+        flash('Wishlist edited','success')
         return True
 
     #Deshace la relacion favoritos: borra la fila que corresponde al favorito que une al user con el quote
@@ -268,7 +340,7 @@ class Wishlist:
         }
 
         flash('Removed from favorites!','success')
-        return connectToMySQL('wishlist').query_db(query,data)
+        return connectToMySQL('wishlist2').query_db(query,data)
 
 
     #Borra un quote creado por el usuario
@@ -282,7 +354,7 @@ class Wishlist:
         }
 
         flash('Deleted quote!','success')
-        return connectToMySQL('wishlist').query_db(query,data)
+        return connectToMySQL('wishlist2').query_db(query,data)
     
 
 

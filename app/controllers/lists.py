@@ -6,6 +6,8 @@ from app.decorators import login_required
 from app.controllers.images import UploadForm,photos
 from app import app
 import pdb
+from flask import flash
+
 from app.models.products import Product
 
 
@@ -25,7 +27,6 @@ def show_lists():
     user_id = user['id']
     creator = Wishlist.get_all_from_user(user_id)
     other_products = Product.get_all_but_user(user_id)
-    #pdb.set_trace()
     return render_template('dashboard.html',log = log,user = user,creator = creator, op = other_products)
 
 
@@ -36,7 +37,7 @@ def show_create(user_id):
     log,user = repited_variables()
 
 
-    return render_template('4create.html',user=user)
+    return render_template('create_wishlist.html',user=user)
 
 # CREATE pOST
 @lists.route('/create-list/<user_id>', methods=['POST'])
@@ -52,24 +53,68 @@ def create_wlist(user_id):
 @lists.route('/list/<list_id>')
 @login_required
 def view_wlist(list_id):
+
     log,user = repited_variables()
     wlist = Wishlist.classify(list_id)
-    wlist_products = Product.get_wishlist_products(list_id)
-    
-    return render_template('single_list.html',log = log,wlist = wlist,user = user,wlist_products = wlist_products) 
-
-
+    par_ids = []
+    for participant in wlist.participants:
+        par_ids.append(participant.id)
+    permission = user['id'] in par_ids
+    return render_template('single_list.html',log = log,wlist = wlist,user = user, permission = permission) 
 
 
 #AÑADIR NUEVO FAVORITO
-@lists.route('/addfavorite/<quote_id>')
+@lists.route('/join/<wishlist_id>/')
 @login_required
-def add_favorite(quote_id):
+def join_wishlist(wishlist_id):
     log,user = repited_variables()
+    Wishlist.request_to_join(user['id'],wishlist_id)
 
-    Quote.add_favorite(user['id'],quote_id)
+    return redirect('/dashboard')
 
-    return redirect('/lists')
+@lists.route('/respond-request/<participant_id>/<wishlist_id>/<status>')
+@login_required
+def respond_request(participant_id,wishlist_id,status):
+    log,user = repited_variables()
+    #PROTECCION DE RUTA
+    # wlist = Wishlist.classify(wishlist_id)
+    # if wlist.creator.id != user['id']:
+    #     flash('You are not the owner of this wishlist!', 'error')
+    #     return redirect ('/')
+    
+    answer = Wishlist.respond_request(participant_id,wishlist_id,status)
+
+    return redirect(f'/list/{wishlist_id}')
+
+
+@lists.route('/edit/<wishlist_id>')
+@login_required
+def show_edit_wlist(wishlist_id):
+    log,user = repited_variables()
+    wlist = Wishlist.classify(wishlist_id)
+    if wlist.creator.id != user['id']:
+        flash('This is not your wishlist!','error')
+        return redirect('/dashboard')
+    
+    return render_template('edit_wishlist.html',user=user,wlist = wlist)
+
+@lists.route('/edit/<wishlist_id>', methods=['POST'])
+@login_required
+def edit_wishlist(wishlist_id):
+    log,user = repited_variables()
+    wlist = Wishlist.classify(wishlist_id)
+    if wlist.creator.id != user['id']:
+        flash('This is not your wishlist!','error')
+        return redirect('/dashboard')
+    pdb.set_trace()
+    Wishlist.edit(wishlist_id, request.form)
+
+
+    return redirect(f'/list/{wishlist_id}')
+
+
+
+
 
 #VER USUARIO
 @lists.route('/users/<id>/')

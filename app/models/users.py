@@ -19,6 +19,7 @@ class User:
         self.password = data['password']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
+        self.img_url = data['img_url']
 
     #Crea una lista de todos los usuarios y los devuelve como objetos User   
     @classmethod
@@ -26,7 +27,7 @@ class User:
         
         query = 'SELECT * FROM users'
 
-        results = connectToMySQL('wishlist').query_db('select * from users')
+        results = connectToMySQL('wishlist2').query_db('select * from users')
         
         users = []
 
@@ -68,7 +69,7 @@ class User:
             'email' : form_data['email']
         }
 
-        results = connectToMySQL('wishlist').query_db(query, data)
+        results = connectToMySQL('wishlist2').query_db(query, data)
         
         if len(results) == 0:
             return True
@@ -87,21 +88,22 @@ class User:
 
 
         query = '''
-                INSERT INTO users ( first_name ,last_name, email , password , created_at, updated_at ) 
-                VALUES ( %(first_name)s , %(last_name)s , %(email)s , %(password)s , NOW() , NOW());
+                INSERT INTO users ( first_name ,last_name, email , password , created_at, updated_at,img_url ) 
+                VALUES ( %(first_name)s , %(last_name)s , %(email)s , %(password)s , NOW() , NOW(), '');
                 '''
 
         data = {
                 "first_name": form_data["first_name"],
                 "last_name":form_data["last_name"],
                 "email" : form_data["email"],
-                "password" : password
+                "password" : password,
+                'img_url': ''
             }
         
         
         flash('Register  succesful!','success')
 
-        return  connectToMySQL('wishlist').query_db(query,data)
+        return  connectToMySQL('wishlist2').query_db(query,data)
 
     #Verifica el login de dos formas:
     #1. que el usuario exista en la base de datos 
@@ -117,7 +119,7 @@ class User:
             "email":form_data['email']
         }
 
-        results= connectToMySQL('wishlist').query_db(query,data)
+        results= connectToMySQL('wishlist2').query_db(query,data)
 
         if len(results) == 0:
             flash('User not registered','error')
@@ -142,7 +144,7 @@ class User:
         data = {
             'id' : user_id
         }
-        results = connectToMySQL('wishlist').query_db(query,data)
+        results = connectToMySQL('wishlist2').query_db(query,data)
 
         if len(results) == 0:
             return False 

@@ -22,7 +22,7 @@ def show_create_product(list_id):
     log,user = repited_variables()
     
     
-    return render_template('cr_product.html',list_id = list_id)
+    return render_template('create_product.html',list_id = list_id)
 
 #CREAR PRODUCTO
 @products.route('/create-product/<list_id>', methods = ['POST'])
@@ -33,3 +33,9 @@ def create_product(list_id):
     Product.create(request.form,user['id'],list_id)
     
     return redirect(f'/list/{list_id}')
+
+#EDITAR PRODUCTO
+@products.route('/delete-product/<wishlist_id>/<product_id>')
+@login_required
+def delete_product(wishlist_id,product_id):
+    pass

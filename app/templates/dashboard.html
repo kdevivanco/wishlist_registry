@@ -3,37 +3,41 @@
 <div class="container">
     <h2 class="welcome-text"> Welcome to Registry</h2>
     <div class="row">
-        <div class="col-8 dashboard-lists-section">
+        <div class="col-7 dashboard-lists-section">
             <div class="add-section">
                 <a href="/create-list/{{user.id}}" class="add-link">
                     + Add a new list!
                 </a>
             </div>
             <h1 class="section-title">
-                See what other users are wishing for...
+                See what other users are registering...
             </h1>
             <div class="my-row">
                 {%for product in op%}
                 <div class="other-post-box">
+                    <img src="{{product.img_url}}" alt="product_picture" class="product-pic"></img>
                     <p class="post-title">{{product.product_name}}</p>
-                    <img src="{{product.url}}" alt="product_picture" class="product-pic"></img>
                     <p class="post-creator">Created by: <a href="/user/{{product.creator.id}}">{{product.creator.first_name}} {{product.creator.last_name}}</a></p>
-                    <form action="/">
-                        Add to wishlist...
+                    <a href="{{product.link}}" target="_blank" class="product-link">See in shop</a>
+                    <div class="product-add">
+                        <ion-icon name="heart-circle-outline" class="add-icon"></ion-icon> 
+                        <p class="add-text">Add to wishlist</p>
+                    </div>
+                    <!--<form action="/">
                         <select name="wishlist" id="">
                             {%for list in creator.lists%}
-                            <option value="{{list.id}}" disabled selected>select wihslist</option>
+                            <option value="" disabled selected>select wihslist</option>
                             <option value="{{list.id}}">{{list.name}}</option>
                             {%endfor%}
                         </select>
                         <button type="submit">Add</button>
-                    </form>
+                    </form>-->
 
                 </div>
                 {%endfor%}
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-5">
             <div class="dashboard-profile-section">
                 <div class="user-main-info">
                     <h2 class="user-name-info">
@@ -58,7 +62,7 @@
                     <!--For Loop con wishlists del usuario-->
                     {%for list in creator.lists%}
                     <div class="wishlist-box">
-                        <img src="#" alt="wishlist-img" class="list-img">
+                        <img src="{{list.img_url}}" alt="wishlist-img" class="list-img" >
                         <div class="list-info-col">
                             <a href="/list/{{list.id}}" class="list-title">{{list.name}}</a>
                             <p class="list-description">{{list.description}}</p>
