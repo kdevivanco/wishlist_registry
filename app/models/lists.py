@@ -95,7 +95,7 @@ class Wishlist:
             'password': result['password'],
             'created_at': result['users.created_at'],
             'updated_at': result['updated_at'],
-            'img_url': result['users.img_url']
+            'profile_url': result['profile_url']
         })
         wlist.creator = creator
 

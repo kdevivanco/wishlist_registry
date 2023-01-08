@@ -4,7 +4,7 @@ import re
 from app import app
 from flask_bcrypt import Bcrypt        
 import json
-
+import pdb
 bcrypt = Bcrypt(app)
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$') 
@@ -19,7 +19,7 @@ class User:
         self.password = data['password']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
-        self.img_url = data['img_url']
+        self.profile_url = data['profile_url']
 
     #Crea una lista de todos los usuarios y los devuelve como objetos User   
     @classmethod
@@ -88,7 +88,7 @@ class User:
 
 
         query = '''
-                INSERT INTO users ( first_name ,last_name, email , password , created_at, updated_at,img_url ) 
+                INSERT INTO users ( first_name ,last_name, email , password , created_at, updated_at,profile_url ) 
                 VALUES ( %(first_name)s , %(last_name)s , %(email)s , %(password)s , NOW() , NOW(), '');
                 '''
 
@@ -97,7 +97,7 @@ class User:
                 "last_name":form_data["last_name"],
                 "email" : form_data["email"],
                 "password" : password,
-                'img_url': ''
+                'profile_url': ''
             }
         
         
@@ -149,3 +149,23 @@ class User:
         if len(results) == 0:
             return False 
         return (cls(results[0]))
+
+    @classmethod
+    def edit(cls,user_id,form_data):
+        query = '''
+            UPDATE users
+            SET first_name = %(first_name)s,
+            last_name = %(last_name)s,
+            profile_url = %(profile_url)s
+            WHERE id = %(id)s;
+        '''
+
+        data ={
+            'id':user_id,
+            'first_name': form_data['first_name'],
+            'last_name': form_data['last_name'],
+            'profile_url': form_data['profile_url']
+        }
+
+        connectToMySQL('wishlist2').query_db(query,data)
+        return

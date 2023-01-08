@@ -39,22 +39,31 @@
         </div>
         <div class="col-5">
             <div class="dashboard-profile-section">
-                <div class="user-main-info">
-                    <h2 class="user-name-info">
-                        {{user.first_name}} {{user.last_name}}
-                    </h2>
-                    <div class="user-pic-info">
-                        <img src="/" alt="profile_picture">
+                <div class="profile-box row">
+                    <div class="user-pic-info col-4">
+                        <img class="profile-pic" src="{{user.profile_url}}" alt="profile_picture">
+                    </div>
+                    <div class="user-other-info col-8">
+                        <h2 class="user-name-info">
+                            {{user.first_name}} {{user.last_name}}
+                        </h2>
+                        <div class="user-main-info">
+                            <p>Wishlists: {{creator.list_count}}</p>
+                            <p>Products: {{creator.created_product_count}} </p>
+                        </div>
+                        <div class="user-links">
+                            <a href="/profile/{{user.id}}" >
+                                <ion-icon style="font-size: 1.5rem;"  name="eye-outline" ></ion-icon>
+                            </a>
+                            <p style="font-size: 0.5rem;">View Profile</p>
+                            <a href="/edit-profile/{{user.id}}" >
+                                <ion-icon name="cog-outline" style="font-size: 1.5rem;" ></ion-icon>
+                            </a>
+                            <p style="font-size: 0.5rem;">Edit Profile</p>
+                        </div>
                     </div>
                 </div>
-                <div class="user-main-stats">
-                    <p>
-                        Wishlists: {{creator.list_count}}
-                    </p>
-                    <p>
-                        Products: {{creator.created_product_count}}
-                    </p>
-                </div>
+
             </div>
             <div class="user-main-saved">
                 <div class="user-main-lists">

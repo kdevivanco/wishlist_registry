@@ -144,7 +144,7 @@ class Product:
         
         query = '''
                 SELECT id FROM products
-                WHERE creator = %(creator_id)s;
+                WHERE creator_id = %(creator_id)s;
                 '''
 
         data = {

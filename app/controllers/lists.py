@@ -106,7 +106,6 @@ def edit_wishlist(wishlist_id):
     if wlist.creator.id != user['id']:
         flash('This is not your wishlist!','error')
         return redirect('/dashboard')
-    pdb.set_trace()
     Wishlist.edit(wishlist_id, request.form)
 
 

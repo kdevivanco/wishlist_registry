@@ -1,0 +1,84 @@
+{% extends '1base.html' %}
+{%block body%}
+<div class="container">
+    <div class="dashboard-profile-section">
+        <div class="profile-box row">
+            <div class="user-pic-info col-4">
+                <img class="profile-pic" src="{{user.profile_url}}" alt="profile_picture">
+            </div>
+            <div class="user-other-info col-8">
+                <h2 class="user-name-info">
+                    {{user.first_name}} {{user.last_name}}
+                </h2>
+                <div class="user-main-info">
+                    <p>Wishlists: {{creator.list_count}}</p>
+                    <p>Products: {{creator.created_product_count}} </p>
+                </div>
+                <div class="user-links">
+                    <a href="/profile/{{user.id}}" >
+                        <ion-icon style="font-size: 1.5rem;"  name="eye-outline" ></ion-icon>
+                    </a>
+                    <p style="font-size: 0.5rem;">View Profile</p>
+                    <a href="/edit-profile/{{user.id}}" >
+                        <ion-icon name="cog-outline" style="font-size: 1.5rem;" ></ion-icon>
+                    </a>
+                    <p style="font-size: 0.5rem;">Edit Profile</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="wishlist-section-profile col-7">
+            <div class="user-main-saved">
+                <div class="user-main-lists">
+                    <h3 class="user-main-subtitle">Your Wishlists</h3>
+                    <!--For Loop con wishlists del usuario-->
+                    {%for list in creator.lists%}
+                    <div class="wishlist-box">
+                        <img src="{{list.img_url}}" alt="wishlist-img" class="list-img-profile" >
+                        <div class="list-info-profile">
+                            <a href="/list/{{list.id}}" class="list-title">{{list.name}}</a>
+                            <p class="list-description">{{list.description}}</p>
+                            <p class="list-product-count">Products: {{list.product_count}}</p>
+                        </div>
+                    </div>
+                    {%endfor%}
+                </div>
+                <div class="user-participating-lists">
+                    <h3 class="user-main-subtitle">Wishlist you're in</h3>
+                    <!--For Loop con wishlists del usuario-->
+                    <div class="wishlist-box">
+                        <img src="#" alt="wishlist-img" class="list-img-profile">
+                        <div class="list-info-profile">
+                            <a href="#" class="list-title">my_wedding_wishlist</a>
+                            <div class="list-description"></div>
+                            <p class="list-product-count">Products: product_count</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="product-section-profile col-4">
+            <div class="profile-product-row">
+                {%for product in user_products%}
+                <div class="profile-product-box">
+                    <img src="{{product.img_url}}" alt="product_picture" class="product-pic"></img>
+                    <p class="post-title">{{product.product_name}}</p>
+                    <p class="post-creator">Created by: <a href="/user/{{product.creator.id}}">{{product.creator.first_name}} {{product.creator.last_name}}</a></p>
+                    <a href="{{product.link}}" target="_blank" class="product-link">See in shop</a>
+                    <div class="product-add">
+                        <ion-icon name="heart-circle-outline" class="add-icon"></ion-icon> 
+                        <p class="add-text">Add to wishlist</p>
+                    </div>
+                {%endfor%}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>
+
+{%endblock%}
