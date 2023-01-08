@@ -138,6 +138,10 @@ class Wishlist:
 
         creator.lists = lists
         
+        creator.participating_lists = cls.get_participating_lists(creator_id,"accepted")
+        creator.requested_lists = cls.get_participating_lists(creator_id,"requested")
+
+
         return creator
 
 
@@ -215,32 +219,51 @@ class Wishlist:
         return connectToMySQL('wishlist2').query_db(query,data) 
 
     
-    #Devuelve todos los quotes favoritos del usuario
+    #Devuelve todos las listas en las que el usuario participa
     @classmethod
-    def get_favorites(cls,user_id): 
+    def get_participating_lists(cls,user_id,status): 
         
         query = '''
-                SELECT quote_id FROM favorites
-                JOIN quotes on quotes.id = favorites.quote_id
-                WHERE user_id = %(user_id)s;
+                SELECT * FROM participants
+                WHERE participant_id = %(participant_id)s and status = %(status)s;
                 '''
 
         data = {
-            'user_id' : user_id
+            'participant_id' : user_id,
+            'status': status
         }
 
-        #results es una lista de todos los ids de los quotes favoritos del usuario
         results = connectToMySQL('wishlist2').query_db(query,data)
-        favorite_quotes = []
+        
+        participating_lists = []
         if results == False:
-            return favorite_quotes #evita que la lista itere si esque esta vacia para evitar un error
+            return participating_lists #evita que la lista itere si esque esta vacia para evitar un error
         
-        for quote_id in results:
-            quote = Quote.classify_quote(quote_id['quote_id']) #clasifica cada quote: cada id esta en un diccionario por eso se le pasa esa variable
-            favorite_quotes.append(quote) #lo agrega a la lista de favoritos
+        for wishlist_id in results:
+            wlist = Wishlist.classify(wishlist_id['wishlist_id']) #clasifica cada quote: cada id esta en un diccionario por eso se le pasa esa variable
+            participating_lists.append(wlist) #lo agrega a la lista de favoritos
         
-        return favorite_quotes
+        return participating_lists
     
+
+    #dejar de participar de una lista:
+    @classmethod
+    def leave(cls,participant_id,wishlist_id):
+        query = '''
+                DELETE FROM participants
+                WHERE participant_id = %(participant_id)s and wishlist_id = %(wishlist_id)s;
+                '''
+
+        data = {
+            'participant_id' : participant_id,
+            'wishlist_id': wishlist_id
+        }
+
+        results = connectToMySQL('wishlist2').query_db(query,data)
+
+        return results
+
+
     #Devuelve todos los quotes que no son favoritos
     @classmethod
     def get_quotable_quotes(cls,id): 

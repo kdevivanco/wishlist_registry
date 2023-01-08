@@ -138,6 +138,11 @@ a{
 
 /* SINGLE LIST STYLE */
 
+.sl-img-block{
+    width: 100%;
+    height: 10rem;
+    opacity: 60%;
+}
 
 .wlist-name{
     font-size: 3rem;
@@ -145,9 +150,9 @@ a{
     font-weight: 800;
 }
 .wishlist-main-inf-cont{
-    background-color:darkgrey;
+    background-color:white;
     padding: 2rem;
-    border-radius: 1rem;
+    margin-bottom: 1rem;
 }
 
 .product-box{
@@ -258,7 +263,15 @@ a{
     border-radius: 1rem;
 }
 
+.added-participant{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
 
+.request-user{
+    flex-grow: 1;
+}
 /*edit*/
 
 .edit-title{
@@ -287,4 +300,26 @@ a{
     width: 10rem;
     padding: 1rem;
     background-color: white;
+}
+.profile-product-row{
+    display: flex;
+}
+.profile-product-box{
+    background-color: white;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 1rem;
+    width: 30%;
+}
+
+/*PRODUCT VIEW*/
+
+.product-view{
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }

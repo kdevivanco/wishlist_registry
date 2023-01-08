@@ -87,6 +87,7 @@ def edit_profile(id):
     if user['id'] != int(id):
         return redirect('/dashboard')
     edited_user = User.get_one(user_id)
+    User.edit(user['id'],request.form)
     session['user'] = {
             'id': edited_user.id,
             'first_name':edited_user.first_name,
@@ -95,8 +96,6 @@ def edit_profile(id):
             'profile_url':edited_user.profile_url
         }
     
-    User.edit(user['id'],request.form)
-
     return redirect('/dashboard')
 
 @users.route('/profile/<id>')
@@ -106,7 +105,7 @@ def show_profile(id):
         return False
     log,user = mydecorator()
     user_id = user['id']
-    creator = Wishlist.get_all_from_user(user_id)
-    user_products = Product.get_all_from_user(user_id)
+    creator = Wishlist.get_all_from_user(id)
+    user_products = Product.get_all_from_user(id)
 
     return render_template('view_profile.html',user=user,creator=creator, user_products = user_products)

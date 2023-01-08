@@ -104,7 +104,7 @@ class Product:
     #Seleccionar todos los productos de la lista: 
     @classmethod
     def get_wishlist_products(cls,wishlist_id):
-        query = '''SELECT products.id, product_name, description,brand, link, img_url, price, created_at, updated_at, products.creator_id FROM wishlist_products 
+        query = '''SELECT products.id, product_name, description,brand, link, img_url, price, created_at, updated_at, products.creator_id, status FROM wishlist_products 
                     join products on products.id = wishlist_products.product_id
                     where wishlist_products.wishlist_id = %(wishlist_id)s '''
 
@@ -119,9 +119,9 @@ class Product:
             return products
         
         result = results[0]
-
+        
         for result in results:
-            products.append(cls({
+            product = cls({
                 'id': result['id'],
                 'product_name': result['product_name'],
                 'description': result['description'],
@@ -131,12 +131,41 @@ class Product:
                 'price':result['price'],
                 'created_at': result['created_at'],
                 'updated_at': result['updated_at'],
-                'creator_id': result['creator_id']
-            }))
+                'creator_id': result['creator_id'],
+            })
+            product.status = result['status']
+            products.append(product)
         
         return products
 
+    @classmethod
+    def buy(cls,wishlist_id,product_id,participant_id):
+        query = '''
+                INSERT INTO participant_purchases ( wishlist_id,product_id,participant_id) 
+                VALUES ( %(wishlist_id)s , %(product_id)s, %(participant_id)s);
+                '''
+
+        data = {
+                'wishlist_id': wishlist_id,
+                'product_id': product_id,
+                'participant_id': participant_id
+            }
+        connectToMySQL('wishlist2').query_db(query,data) 
+
+        query1 = '''
+                UPDATE wishlist_products
+                SET status = 'bought'
+                WHERE wishlist_id = %(wishlist_id)s and product_id = %(product_id)s;
+                '''
+
+        data1 = {
+                'wishlist_id': wishlist_id,
+                'product_id': product_id,
+            }
         
+        connectToMySQL('wishlist2').query_db(query1,data1) 
+
+        return
 
     #Devuelve todos los quotes favoritos del usuario
     @classmethod
@@ -219,15 +248,22 @@ class Product:
     def edit(cls,form_data,id):
 
         query = '''
-                UPDATE quotes
-                SET author = %(author)s,
-                quote = %(quote)s,
-                updated_at = NOW()
+                UPDATE products
+                SET product_name = %(product_name)s,
+                link = %(link)s,
+                brand = %(brand)s,
+                img_url = %(img_url)s,
+                description = %(description)s,
+                price = %(price)s
                 where id = %(id)s'''
 
         data = {
-            'author' : form_data['author'],
-            'quote' : form_data['quote'],
+            'product_name' : form_data['product_name'],
+            'link' : form_data['link'],
+            'brand' : form_data['brand'],
+            'img_url' : form_data['img_url'],
+            'description' : form_data['description'],
+            'price' : form_data['price'],
             'id' : id
         }
 
@@ -236,7 +272,7 @@ class Product:
             flash('something went wrong','danger')
             return False
         
-        flash('Quoted edited','success')
+        flash('Product edited','success')
         return True
 
     #Deshace la relacion favoritos: borra la fila que corresponde al favorito que une al user con el quote

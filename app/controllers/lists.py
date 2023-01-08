@@ -53,38 +53,57 @@ def create_wlist(user_id):
 @lists.route('/list/<list_id>')
 @login_required
 def view_wlist(list_id):
-
     log,user = repited_variables()
     wlist = Wishlist.classify(list_id)
     par_ids = []
     for participant in wlist.participants:
         par_ids.append(participant.id)
+    req_ids = []
+    for participant in wlist.requests:
+        req_ids.append(participant.id)
     permission = user['id'] in par_ids
-    return render_template('single_list.html',log = log,wlist = wlist,user = user, permission = permission) 
+    requested = user['id'] in req_ids
+    return render_template('single_list.html',log = log,wlist = wlist,user = user, permission = permission,requested = requested) 
 
-
-#AÑADIR NUEVO FAVORITO
+#Mandar request para unirse a un wishlist
 @lists.route('/join/<wishlist_id>/')
 @login_required
 def join_wishlist(wishlist_id):
     log,user = repited_variables()
+    wlist = Wishlist.classify(wishlist_id)
+    if int(wlist.creator_id) == int(user['id']):
+        flash('You cant join your own list!','error')
+        return redirect(f'/list/{wishlist_id}')
     Wishlist.request_to_join(user['id'],wishlist_id)
 
-    return redirect('/dashboard')
+    return redirect(f'/list/{wishlist_id}')
 
 @lists.route('/respond-request/<participant_id>/<wishlist_id>/<status>')
 @login_required
 def respond_request(participant_id,wishlist_id,status):
     log,user = repited_variables()
     #PROTECCION DE RUTA
-    # wlist = Wishlist.classify(wishlist_id)
-    # if wlist.creator.id != user['id']:
-    #     flash('You are not the owner of this wishlist!', 'error')
-    #     return redirect ('/')
+    wlist = Wishlist.classify(wishlist_id)
+    if wlist.creator.id != user['id']:
+        flash('You are not the owner of this wishlist!', 'error')
+        return redirect ('/dashboard')
     
     answer = Wishlist.respond_request(participant_id,wishlist_id,status)
 
     return redirect(f'/list/{wishlist_id}')
+
+
+@lists.route('/buy/<wishlist_id>/<product_id>/<participant_id>')
+@login_required
+def buy_product(wishlist_id,product_id,participant_id):
+    log,user = repited_variables()
+    #proteccion:
+    if int(user['id']) != int(participant_id):
+        flash('Dont cheat the system!','error')
+        return redirect(f'/list/{wishlist_id}')
+    Product.buy(wishlist_id,product_id,participant_id)
+
+    return redirect (f'/list/{wishlist_id}')
 
 
 @lists.route('/edit/<wishlist_id>')
@@ -112,23 +131,18 @@ def edit_wishlist(wishlist_id):
     return redirect(f'/list/{wishlist_id}')
 
 
-
-
-
-#VER USUARIO
-@lists.route('/users/<id>/')
+@lists.route('/leave/<list_id>/<user_id>')
 @login_required
-def show_user(id):
+def leave_list(list_id,user_id):
     log,user = repited_variables()
-
-    user_lists  = Quote.get_created_lists(id)
-
-    quote_count = 0
-    creator_name = user_lists[0].creator.first_name + ' ' +  user_lists[0].creator.last_name
-    for quote in user_lists:
-        quote_count+=1 
+    if int(user_id) != int(user['id']):
+        flash('You are not allowed on this link!','error')
+        return redirect('/dashboard')
     
-    return render_template('user_profile.html',log=log,user_lists = user_lists,quote_count = quote_count)
+    Wishlist.leave(user_id,list_id)
+
+    return redirect(f'/list/{list_id}')
+
 
 
 #EDITAR QUOTE - MOSTRAR PAGINA DE EDICION

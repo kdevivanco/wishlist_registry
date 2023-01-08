@@ -20,19 +20,9 @@
                     <p class="post-creator">Created by: <a href="/user/{{product.creator.id}}">{{product.creator.first_name}} {{product.creator.last_name}}</a></p>
                     <a href="{{product.link}}" target="_blank" class="product-link">See in shop</a>
                     <div class="product-add">
-                        <ion-icon name="heart-circle-outline" class="add-icon"></ion-icon> 
-                        <p class="add-text">Add to wishlist</p>
+                        <a href="/add/{{product.id}}"><ion-icon name="heart-circle-outline" class="add-icon"></ion-icon> </a>
+                        <a href="/add/{{product.id}}"></a><p class="add-text">Add to wishlist</p></a>
                     </div>
-                    <!--<form action="/">
-                        <select name="wishlist" id="">
-                            {%for list in creator.lists%}
-                            <option value="" disabled selected>select wihslist</option>
-                            <option value="{{list.id}}">{{list.name}}</option>
-                            {%endfor%}
-                        </select>
-                        <button type="submit">Add</button>
-                    </form>-->
-
                 </div>
                 {%endfor%}
             </div>
@@ -71,7 +61,9 @@
                     <!--For Loop con wishlists del usuario-->
                     {%for list in creator.lists%}
                     <div class="wishlist-box">
-                        <img src="{{list.img_url}}" alt="wishlist-img" class="list-img" >
+                        <a href="/list/{{list.id}}" class="list-img-link">
+                            <img src="{{list.img_url}}" alt="wishlist-img" class="list-img" >
+                        </a>
                         <div class="list-info-col">
                             <a href="/list/{{list.id}}" class="list-title">{{list.name}}</a>
                             <p class="list-description">{{list.description}}</p>
@@ -83,14 +75,18 @@
                 <div class="user-participating-lists">
                     <h3 class="user-main-subtitle">Wishlist you're in</h3>
                     <!--For Loop con wishlists del usuario-->
+                    {%for list in creator.participating_lists%}
                     <div class="wishlist-box">
-                        <img src="#" alt="wishlist-img" class="list-img">
+                        <a href="/list/{{list.id}}" class="list-img-link">
+                            <img src="{{list.img_url}}" alt="wishlist-img" class="list-img">
+                        </a>
                         <div class="list-info-col">
-                            <a href="#" class="list-title">my_wedding_wishlist</a>
+                            <a href="/list/{{list.id}}" class="list-title">{{list.name}}</a>
                             <div class="list-description"></div>
-                            <p class="list-product-count">Products: product_count</p>
+                            <p class="list-product-count">Products: {{list.product_count}}</p>
                         </div>
                     </div>
+                    {%endfor%}
                 </div>
             </div>
             
