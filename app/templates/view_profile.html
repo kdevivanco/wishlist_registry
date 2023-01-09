@@ -95,12 +95,14 @@
                     </div>
                     <div class="box-info">
                         <p class="post-title">{{product.product_name}}</p>
-                        <p class="post-creator">Created by: <a href="/user/{{product.creator.id}}">{{product.creator.first_name}} {{product.creator.last_name}}</a></p>
+                        <p class="post-creator">Created by: <a href="/profile/{{product.creator.id}}">{{product.creator.first_name}} {{product.creator.last_name}}</a></p>
                         <a href="{{product.link}}" target="_blank" class="product-link">See in shop</a>
                         {%if user.id != creator.id%}
                         <div class="product-add">
-                            <ion-icon name="heart-circle-outline" class="add-icon"></ion-icon> 
-                            <p class="add-text">Add to wishlist</p>
+                            <div class="product-add">
+                                <a href="/add/{{product.id}}"><ion-icon name="heart-circle-outline" class="add-icon"></ion-icon> </a>
+                                <a href="/add/{{product.id}}"></a><p class="add-text">Add to wishlist</p></a>
+                            </div>
                         </div>
                         {%endif%}
                     </div>

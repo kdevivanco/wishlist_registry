@@ -32,9 +32,9 @@ def show_register():
 @users.route('/register',methods=["POST"])
 def register_user():
     if not User.email_free(request.form):
-        return redirect('/')
+        return redirect('/register')
     if not User.validate_user(request.form):
-        return redirect('/')
+        return redirect('/register')
     
     user_id = User.create_new(request.form)
     user = User.get_one(user_id)
@@ -66,7 +66,7 @@ def login():
             'profile_url':user.profile_url
         }
     else:
-        return redirect('/')
+        return redirect('/login')
 
     return redirect('/dashboard')
 
@@ -121,4 +121,4 @@ def show_profile(id):
     
     user_products = Product.get_all_from_user(id)
 
-    return render_template('view_profile.html',user=user,creator=creator, user_products = user_products,this_user = this_user)
+    return render_template('view_profile.html',user=user,creator=creator, user_products = user_products,this_user = this_user, log = log)

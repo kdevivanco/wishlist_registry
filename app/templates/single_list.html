@@ -102,13 +102,13 @@
                         <a href="/dump-participant/{{wlist.id}}/{{participant.id}}" class="sl-leave-link wlist-description" style="color: brown;">Delete from Wishlist</a>
                         {%endif%}
                     </div>
+                    {%endfor%}
                     {%if user.id != wlist.creator.id and permission != True and requested != True%}
-                        <a href="/join/{{wlist.id}}/" class="join-wishlist btn btn-request">Request to join</a>
+                        <a href="/join/{{wlist.id}}/" class="join-wishlist mt-4 btn btn-request">Request to join</a>
                     {%endif%}
                     {%if requested%}
-                        <a href="#" class="join-wishlist btn btn-primary" style="background-color: brown;">Pending aproval...</a>
+                        <a href="#" class="join-wishlist mt-4 btn btn-primary" style="background-color: brown;">Pending aproval...</a>
                     {%endif%}
-                    {%endfor%}
                 </div>
             </div>
         </div>

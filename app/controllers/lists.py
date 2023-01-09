@@ -175,5 +175,16 @@ def search():
     return redirect(f'/list/{list_id}')
 
 
-
-
+#editar
+@lists.route('/delete-wishlist/<wishlist_id>')
+@login_required
+def delete_wishlist(wishlist_id):
+    log,user = repited_variables()
+    wlist = Wishlist.classify(wishlist_id)
+    if wlist.creator.id != user['id']:
+        flash('This is not your wishlist!','error')
+        return redirect('/dashboard')
+    
+    Wishlist.delete(wishlist_id)
+    
+    return redirect(f'/dashboard')

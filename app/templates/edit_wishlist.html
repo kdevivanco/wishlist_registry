@@ -4,49 +4,62 @@
 {%block body%}
 
 <div class="container">
-    <a style="text-align: right;" href="/">Back to dashboard</a>
-    <div class="show-img-in-edit">
-        <img class="img-in-edit" src="{{wlist.img_url}}" alt="" style="width: 30rem;">
-    </div>
-    <div class="create mt-5" style="width: 40rem;">
-        <h3 class="edit-title">Edit your Wishlist <span>{{wlist.name}}</span></h3>
-        <form action="/edit/{{wlist.id}}" method="POST">
-            <div class="mb-3">
-                <label for="name" class="form-label">Wishlist Name</label>
-                <input required type="text" name="name"  class="form-control" id="author" required value="{{wlist.name}}">
+    <a style="text-align: right;" href="/dashboard">Back to dashboard</a>
+    
+    <div class="row">
+        <div class="col-6">
+            <div class="show-img-in-edit">
+                <img class="img-in-edit" src="{{wlist.img_url}}" alt="" style="width: 30rem;">
             </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <input required type="text" name="description"  class="form-control" id="author"  value="{{wlist.description}}" required>
+            <div class="create mt-5" style="width: 40rem;">
+                <h3 class="edit-title">Edit your Wishlist <span>{{wlist.name}}</span></h3>
+                <form action="/edit/{{wlist.id}}" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Wishlist Name</label>
+                        <input required type="text" name="name"  class="form-control" id="author" required value="{{wlist.name}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input required type="text" name="description"  class="form-control" id="author"  value="{{wlist.description}}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="text" class="form-label">Message</label>
+                        <input required type="text" name="text"  class="form-control" id="author" value="{{wlist.message}}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="img_url" class="form-label">Img url</label>
+                        <input required type="text" name="img_url"  class="form-control" id="author" value="{{wlist.img_url}}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end_date" class="form-label">When does this list expire:</label>
+                        <input required type="date" name="end_date"  class="form-control" id="author" value="{{wlist.end_date}}" required>
+                    </div> 
+                    <div class="mb-3">
+                        <label  class="form-label">Privacy</label>
+                        <select class="form-select" name="privacy" aria-label="Default select example">
+                            <option value="" disabled selected> Choose a privacy setting... </option>
+                            <option name="privacy" value="private">Private</option>
+                            <option name="privacy" value="public">Public</option>
+                        </select>
+                    </div> 
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                {%if filename%}
+                <div class="mt-5">
+                    <img src="{{url_for('static',filename=filename)}}" alt="" style="width: 200px;">
+                </div>
+                {%endif%}
             </div>
-            <div class="mb-3">
-                <label for="text" class="form-label">Message</label>
-                <input required type="text" name="text"  class="form-control" id="author" value="{{wlist.message}}" required>
-            </div>
-            <div class="mb-3">
-                <label for="img_url" class="form-label">Img url</label>
-                <input required type="text" name="img_url"  class="form-control" id="author" value="{{wlist.img_url}}" required>
-            </div>
-            <div class="mb-3">
-                <label for="end_date" class="form-label">When does this list expire:</label>
-                <input required type="date" name="end_date"  class="form-control" id="author" value="{{wlist.end_date}}" required>
-            </div> 
-            <div class="mb-3">
-                <label  class="form-label">Privacy</label>
-                <select class="form-select" name="privacy" aria-label="Default select example">
-                    <option value="" disabled selected> Choose a privacy setting... </option>
-                    <option name="privacy" value="private">Private</option>
-                    <option name="privacy" value="public">Public</option>
-                </select>
-            </div> 
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        {%if filename%}
-        <div class="mt-5">
-            <img src="{{url_for('static',filename=filename)}}" alt="" style="width: 200px;">
+        
         </div>
-        {%endif%}
+        <div class="col-6">
+            <div class="delete">
+                <a href="/delete-wishlist/{{wlist.id}}" class="btn btn-primary" style="background-color: brown;">Delete this Wishlist</a>
+                <p style="color:red; font-size: 0.7rem;">CAUTION! This action is irreverisble</p>
+            </div>
+        </div>
     </div>
+    
 
 </div>
 

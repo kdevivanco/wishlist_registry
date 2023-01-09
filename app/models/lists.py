@@ -300,4 +300,17 @@ class Wishlist:
         flash('Wishlist edited','success')
         return True
 
+
+    @classmethod
+    def delete(cls,id):
+        query = '''DELETE FROM wishlists 
+                    where id = %(id)s '''
+
+        data = {
+            "id": id
+        }
+
+        flash('Deleted wishlist!','success')
+        return connectToMySQL('wishlist2').query_db(query,data)
+
     
