@@ -96,7 +96,10 @@
                         <ion-icon name="person-circle-outline"></ion-icon>
                         <a href="/profile/{{participant.id}}" class="request-user wlist-description">{{participant.first_name}} {{participant.last_name}}</a>
                         {%if participant.id == user.id%}
-                        <a href="/leave/{{wlist.id}}/{{user.id}}" class="sl-leave-link">Leave list</a>
+                        <a href="/leave/{{wlist.id}}/{{user.id}}" class="sl-leave-link wlist-description" style="color: brown;">Leave list</a>
+                        {%endif%}
+                        {%if wlist.creator.id == user.id%}
+                        <a href="/dump-participant/{{wlist.id}}/{{participant.id}}" class="sl-leave-link wlist-description" style="color: brown;">Delete from Wishlist</a>
                         {%endif%}
                     </div>
                     {%if user.id != wlist.creator.id and permission != True and requested != True%}

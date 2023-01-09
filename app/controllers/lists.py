@@ -149,6 +149,19 @@ def leave_list(list_id,user_id):
     return redirect(f'/list/{list_id}')
 
 
+@lists.route('/dump-participant/<list_id>/<participant_id>')
+@login_required
+def dump_participant(list_id,participant_id):
+    log,user = repited_variables()
+    wlist = Wishlist.classify(list_id)
+    if int(wlist.creator.id) != int(user['id']):
+        flash('You are not allowed on this link!','error')
+        return redirect('/dashboard')
+    Wishlist.leave(participant_id,list_id)
+
+    return redirect(f'/list/{list_id}')
+
+
 @lists.route('/search',methods=['POST'])
 @login_required
 def search():
