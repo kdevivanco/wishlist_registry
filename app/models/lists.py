@@ -7,6 +7,8 @@ from app.models.users import User
 import time
 import pdb
 from app.models.products import Product
+from datetime import date
+
 bcrypt = Bcrypt(app)
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$') 
@@ -29,9 +31,10 @@ class Wishlist:
         self.participants = []
 
 
-    #Valida el formulario para crear un quote
+    #Valida el formulario
     @classmethod
     def validate(cls,form_data):
+        now = str(date.today())
         is_valid = True
         if len(form_data['name']) < 8:
             flash("Wishlist name must be at least 8 characters",'error')
@@ -39,7 +42,9 @@ class Wishlist:
         if len(form_data['description']) < 10:
             flash("Description must be at least 10 characters.",'error')
             is_valid = False
-        #FALTA AGREGAR VALIDACION DE ENDDATE
+        if form_data['end_date']< now:
+            flash("Date must be in the future.",'error')
+            is_valid = False
         return is_valid
 
     #PROTECCION DE RUTAS
@@ -82,9 +87,10 @@ class Wishlist:
         }
 
         results = connectToMySQL('wishlist2').query_db(query,data)
-        if results == False:
-            print('no quote matches id')
+        if results == False or len(results) ==0:
+            print('no list matches id')
             return False
+        
         result = results[0]
         wlist = cls(result)
         creator = User({ #atributo de quote

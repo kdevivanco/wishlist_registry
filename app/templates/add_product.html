@@ -4,27 +4,31 @@
 {%block body%}
 
 <div class="container">
-    <a style="text-align: right;" href="/dashboard">Back to dashboard</a>
-    <div class="row">
-        <div class="product-view col-6">
-            <img src="{{product.img_url}}" alt="{{product.description}}" class="pv-img" style="width: 20rem;">
-            <h3 class="pv-name">{{product.product_name}}</h5>
-            <p class="pv-brand">Store: {{product.brand}}</p>
-            <p class="pv-price">Price: s/.{{product.price}}</p>
+    <div class="row mb-5">
+        <div class="col-6">
+            <div class="product-view">
+                <img src="{{product.img_url}}" alt="{{product.description}}" class="pv-img" style="width: 15rem;">
+                <h3 class="pv-name">{{product.product_name}}</h5>
+                <p class="pv-brand">Store: {{product.brand}}</p>
+                <p class="pv-price">Price: s/.{{product.price}}</p>
+                <a href="{{product.link}}" target="_blank" class="product-link">See in shop</a>
+            </div>
         </div>
         <div class="add-pv-form col-6">
-            <h6 class="add-pv-subtitle">Add to wishlist...</h6>
+            <h1 class="add-pv-subtitle mb-5">Add to wishlist...</h1>
             <form action="/add/{{product.id}}" method="post">
-                <select name="wishlist_id" id="wishlist_id">
+                <select class="mb-2" name="wishlist_id" id="wishlist_id">
                     <option disabeled>Select one of your wishlists</option>
                     {%for list in creator.lists%}
                     <option value="{{list.id}}">{{list.name}}</option>
                     {%endfor%}
                 </select>
-                <button type="submit">Add</button>
+                <br>
+                <button class="btn btn-primary" type="submit">Add</button>
             </form>
         </div>
     </div>
+    <a class="btn btn-primary" style="text-align: right;" href="/dashboard">Back to dashboard</a>
     
 
 </div>

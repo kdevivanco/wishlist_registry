@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;800&family=Quicksand:wght@300;400&display=swap');
+
+
+
 body{
     font-family: 'Nanum Gothic', sans-serif;
     background-color: #dfdfdf;
@@ -5,11 +9,53 @@ body{
 
 a{
     text-decoration: none;
+    color: rgb(11, 80, 209);
 }
 
+.btn-primary{
+    background-color: #042b46;
+    color: white;
+    border-radius: 0;
+    padding-left:2rem;
+    padding-right: 2rem;
+    border: 0;
+}
+
+.btn-secondary{
+    background-color: white;
+    color: #042b46;
+    border-radius: 0;
+    padding-left:2rem;
+    padding-right: 2rem;
+    border: 0;
+}
+
+.btn-request{
+    background-color: green;
+    color: white;
+    border-radius: 0;
+    padding-left:2rem;
+    padding-right: 2rem;
+    border: 0;
+}
+
+.navbar{
+    background-color: #154568;
+    padding: 1.5rem;
+}    
+
+.navbar-brand{
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.form label{
+    color: #042b46;
+}
 
 .dashboard-profile-section{
     background-color: white;
+    border: #064f83 2px solid;
     border-radius: 0.7rem;
     padding: 1rem;
 }
@@ -21,8 +67,10 @@ a{
     font-size:1.8rem;
     margin-bottom: 1rem;
 }
-
-
+.user-name-nav{
+    color: white;
+    margin-right: 1rem;
+}
 .user-links{
     display: flex;
     flex-direction: row;
@@ -38,11 +86,12 @@ a{
 
 
 .add-link{
-    color: darkblue;
-    background-color: white;
+    color: #dfdfdf;
+    background-color: #042b46;
     border-radius: 0.7rem;
     padding: 0.7rem;
     margin-right: 2rem;
+    font-size: 1.5rem;
 }
 
 .welcome-text,.add-section, .dashboard-profile-section{
@@ -53,10 +102,10 @@ a{
 .my-row{
     display: flex;
     flex-wrap: wrap;
-    height: 20rem;
+    height:22rem;
 }
 .product-pic{
-    width: 90px;
+    width: 120px;
     margin: auto;
 }
 
@@ -64,12 +113,11 @@ a{
     display: flex;
     flex-direction: column;
     background-color: white;
-    margin:1rem;
-    margin-bottom: 1rem;
+    margin:0.7rem;
     padding: 0.8rem;
     width: 30%;
     height: 100%;
-    border-radius: 0.5rem;
+    border-radius: 2rem;
     justify-content: space-between;
 }
 .post-title{
@@ -104,6 +152,16 @@ a{
     margin-bottom: 1rem;
     color: firebrick;
 }
+.add-text{
+    font-family: 'Quicksand', sans-serif;
+    color: firebrick;
+}
+
+.post-creator,.product-link,.user-main-info>*,.user-links>*,.wishlist-box>*{
+    font-family: 'Quicksand', sans-serif;
+    color: #042b46;
+}
+
 /*USER WISHLIST SECTION*/
 
 .wishlist-box{
@@ -111,14 +169,23 @@ a{
     display: flex;
 }
 
+.list-img,.list-img-profile{
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+}
 .list-img{
     width: 10rem;
     height: 10rem;
     padding: 1rem;
     background-color: white;
+
+}
+
+.list-info-col, .list-info-profile{
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
 }
 .list-info-col{
-    background-color: white;
     display: flex;
     flex-direction: column;
     padding: 0.5rem;
@@ -127,11 +194,14 @@ a{
     width: 100%;
     margin-bottom: 1rem;
     height: 10rem;
+    background-color: white;
+
 }
 
 .list-title{
-    font-style: bold;
-    color: black;
+    font-family: 'Frank Ruhl Libre', serif;
+    font-weight: 800;
+    color: #042b46;
     font-size: 1.5rem;
 }
 
@@ -146,13 +216,17 @@ a{
 
 .wlist-name{
     font-size: 3rem;
-    color: black;
+    color: #042b46;
     font-weight: 800;
 }
+
 .wishlist-main-inf-cont{
     background-color:white;
     padding: 2rem;
     margin-bottom: 1rem;
+}
+.wlist-description{
+    font-family: 'Quicksand', sans-serif;
 }
 
 .product-box{
@@ -183,13 +257,24 @@ a{
     justify-content: flex-end;
     align-items: center;
 }
+
+.box-info>*{
+    font-family: 'Quicksand','sans serif';
+}
 .product-name{
     font-size: 1rem;
     font-weight:700;
+    font-family: 'Frank Ruhl Libre', serif;;
 }
 
 .wlist-products-box{
     display: flex;
+    flex-wrap: wrap;
+}
+
+.sl-product-box{
+    width: 25%;
+    height: 25rem;
 }
 .buy-section{
     display: flex;
@@ -284,6 +369,10 @@ a{
 }
 
 /*view profile*/
+
+.profile-box{
+    background-color: white;
+}
 .list-info-profile{
     justify-content: flex-start;
     align-items: flex-start;
@@ -303,15 +392,7 @@ a{
 }
 .profile-product-row{
     display: flex;
-}
-.profile-product-box{
-    background-color: white;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-bottom: 1rem;
-    width: 30%;
+    flex-wrap: wrap;
 }
 
 /*PRODUCT VIEW*/
@@ -322,4 +403,96 @@ a{
     justify-content: center;
     flex-direction: column;
     align-items: center;
+}
+
+
+/*LANDING PAGE*/
+
+body{
+    color: #073d63;
+    font-family: 'Frank Ruhl Libre', serif;
+    background-image: linear-gradient(to right,#f6dad1 ,#fff1ea);
+}
+
+.landing-nav{
+    margin-top: 1rem;
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    justify-content: space-between;
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
+
+.lan-nav-link{
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #073859;
+}
+
+.landing-title{
+    color: #042b46;
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 7rem;
+    font-weight: 800;
+}
+
+.lan-cont{
+    margin-top: 4rem;
+}
+
+.landing-subtitle{
+    font-weight: 800;
+    font-size: 3rem;
+    margin-bottom: 3rem;
+}
+ul{
+    margin-bottom: 3rem;
+}
+.landing-list-item{
+    font-family: 'Quicksand', sans-serif;
+    display:flex;
+    flex-direction:row;
+    align-items: center;
+    margin-bottom: 0;
+    font-size: 1.5rem;
+}
+
+.landing-list-item ion-icon{
+    margin-right: 0.5rem;
+}
+.landing-list-item p {
+    margin-top: 0.8rem;
+}
+
+.register-button{
+    background-color: #042b46;
+    color: beige;
+    padding: 1rem;
+    font-size: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+
+}
+.already-account{
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+.landing-img{
+    background-image: url(/wishlist/app/static/landing_img.png) cover no-repeat;
+    width: 100%;
+    height: 60vh;
+    margin-left: 2rem;
+}
+
+
+/*ADD PRODUCT*/
+.product-view{
+    padding: 1rem;
+    background-color: white;
+    border-radius: 0.7rem;
+    width: 50%;
+    margin: auto;
 }

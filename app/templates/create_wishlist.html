@@ -4,45 +4,51 @@
 {%block body%}
 
 <div class="container">
-    <a style="text-align: right;" href="/">Back to dashboard</a>
+    <a class="btn btn-secondary mb-3"style="text-align: right;" href="/dashboard">Back to dashboard</a>
     
-    <div class="create mt-5" style="width: 20rem;">
-        <h3>Create your Wishlist!</h3>
-        <form action="/create-list/{{user.id}}" method="POST">
-            <div class="mb-3">
-                <label for="name" class="form-label">Wishlist Name</label>
-                <input required type="text" name="name"  class="form-control" id="author" required>
+    <h3 style="font-size: 5rem;">Create your Wishlist!</h3>
+    <div class="row">
+
+        <div class="col-4">
+            <div class="create mt-2" style="width: 20rem;">
+                <form action="/create-list/{{user.id}}" method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Wishlist Name</label>
+                        <input required type="text" name="name"  class="form-control" id="author" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input required type="text" name="description"  class="form-control" id="author" placeholder= "write a short description" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="text" class="form-label">Message</label>
+                        <input required type="text" name="text"  class="form-control" id="author" placeholder= "Tell people more about this list!" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="img_url" class="form-label">Img url</label>
+                        <input required type="text" name="img_url"  class="form-control" id="author" placeholder= "Paste a url to make your wishlist have a display img!" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end_date" class="form-label">When does this list expire:</label>
+                        <input required type="date" name="end_date"  class="form-control" id="author" placeholder= "Tell people more about this list!" required>
+                    </div> 
+                    <div class="mb-3">
+                        <label  class="form-label">Privacy</label>
+                        <select class="form-select" name="privacy" aria-label="Default select example">
+                            <option name="privacy" value="private">Private</option>
+                            <option name="privacy" value="public">Public</option>
+                        </select>
+                    </div> 
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                {%if filename%}
+                <div class="mt-5">
+                    <img src="{{url_for('static',filename=filename)}}" alt="" style="width: 200px;">
+                </div>
+                {%endif%}
             </div>
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <input required type="text" name="description"  class="form-control" id="author" placeholder= "write a short description" required>
-            </div>
-            <div class="mb-3">
-                <label for="text" class="form-label">Message</label>
-                <input required type="text" name="text"  class="form-control" id="author" placeholder= "Tell people more about this list!" required>
-            </div>
-            <div class="mb-3">
-                <label for="img_url" class="form-label">Img url</label>
-                <input required type="text" name="img_url"  class="form-control" id="author" placeholder= "Paste a url to make your wishlist have a display img!" required>
-            </div>
-            <div class="mb-3">
-                <label for="end_date" class="form-label">When does this list expire:</label>
-                <input required type="date" name="end_date"  class="form-control" id="author" placeholder= "Tell people more about this list!" required>
-            </div> 
-            <div class="mb-3">
-                <label  class="form-label">Privacy</label>
-                <select class="form-select" name="privacy" aria-label="Default select example">
-                    <option name="privacy" value="private">Private</option>
-                    <option name="privacy" value="public">Public</option>
-                </select>
-            </div> 
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        {%if filename%}
-        <div class="mt-5">
-            <img src="{{url_for('static',filename=filename)}}" alt="" style="width: 200px;">
         </div>
-        {%endif%}
+        
     </div>
 
 </div>

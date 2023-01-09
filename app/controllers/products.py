@@ -20,9 +20,9 @@ products = Blueprint('products', __name__, template_folder='templates')
 @login_required
 def show_create_product(list_id):
     log,user = repited_variables()
+    wlist = Wishlist.classify(list_id)
     
-    
-    return render_template('create_product.html',list_id = list_id)
+    return render_template('create_product.html',list_id = list_id,wlist = wlist)
 
 #CREAR PRODUCTO
 @products.route('/create-product/<list_id>', methods = ['POST'])
@@ -85,5 +85,13 @@ def edit_product(product_id):
 @products.route('/delete-product/<wishlist_id>/<product_id>')
 @login_required
 def delete_product(wishlist_id,product_id):
-    pass
+    log,user = repited_variables()
+    wlist = Wishlist.classify(wishlist_id)
+    if wlist.creator.id != user['id']:
+        flash('This is not your wishlist!','error')
+        return redirect('/dashboard')
+
+    Product.delete_from_wishlist(product_id,wishlist_id)
+
+    return redirect(f'/list/{wishlist_id}')
 

@@ -18,12 +18,16 @@ def mydecorator(): #esta funcion actua como un decorador solo para usarla en el 
 
 @users.route('/')
 def landing_page():
-    if not mydecorator():
-        log = 'login' #si no hay sesion o sesion == None, entonces en el boton de login/logout dice login
+    if 'user' not in session or session['user'] == None:
+        log = 'Log in'
     else:
-        log,user = mydecorator() #de lo contrario, guarda las variables log y user
-    
-    return render_template('auth.html', log = log)
+        log = 'Log out'
+    return render_template('landing.html', log = log)
+
+@users.route('/register')
+def show_register():
+    return render_template('register.html')
+
 
 @users.route('/register',methods=["POST"])
 def register_user():
@@ -43,6 +47,13 @@ def register_user():
     
     return redirect('/dashboard')
 
+
+@users.route('/login')
+def show_login():
+    #if 'user' in session:
+    #    return redirect('/log')
+    return render_template('login.html')
+
 @users.route('/login',methods=["POST"])
 def login():
     user = User.login(request.form)
@@ -60,7 +71,7 @@ def login():
     return redirect('/dashboard')
 
 
-@users.route('/log')
+@users.route('/logout')
 def logout():
     session['user'] = None
     return redirect('/')
@@ -106,6 +117,8 @@ def show_profile(id):
     log,user = mydecorator()
     user_id = user['id']
     creator = Wishlist.get_all_from_user(id)
+    this_user = User.get_one(id)
+    
     user_products = Product.get_all_from_user(id)
 
-    return render_template('view_profile.html',user=user,creator=creator, user_products = user_products)
+    return render_template('view_profile.html',user=user,creator=creator, user_products = user_products,this_user = this_user)

@@ -106,7 +106,8 @@ class Product:
     def get_wishlist_products(cls,wishlist_id):
         query = '''SELECT products.id, product_name, description,brand, link, img_url, price, created_at, updated_at, products.creator_id, status FROM wishlist_products 
                     join products on products.id = wishlist_products.product_id
-                    where wishlist_products.wishlist_id = %(wishlist_id)s '''
+                    where wishlist_products.wishlist_id = %(wishlist_id)s
+                    order by created_at desc '''
 
         data = {
             "wishlist_id": wishlist_id
@@ -219,31 +220,7 @@ class Product:
         
         return other_products
 
-
-    #Devuelve todos los quotes creados por un usuario, usando su id
-    @classmethod
-    def get_created_quotes(cls,user_id): 
-        
-        #selecciona todos los ids de los quotes escritos por el usuario
-        query = '''
-                SELECT quotes.id FROM quotes
-                JOIN users on users.id = quotes.creator_id
-                where creator_id = %(creator_id)s;'''
-
-        data = {
-            'creator_id' : user_id
-        }
-
-        #results es una lista de todos los ids de los quotes creados por el usuario
-        results = connectToMySQL('wishlist2').query_db(query,data)
-        created_quotes = []
-        for quote_id in results:
-            quote = Quote.classify_quote(quote_id['id'])
-            created_quotes.append(quote)
-        
-        return created_quotes
-    
-    #Edita un quote 
+    #edita un producto
     @classmethod
     def edit(cls,form_data,id):
 
@@ -275,33 +252,20 @@ class Product:
         flash('Product edited','success')
         return True
 
-    #Deshace la relacion favoritos: borra la fila que corresponde al favorito que une al user con el quote
-    @classmethod
-    def remove_from_favorites(cls,user_id,quote_id):
-        query = '''DELETE FROM favorites 
-        where user_id = %(user_id)s
-        and  quote_id = %(quote_id)s; '''
-
-        data = {
-            "user_id": user_id,
-            "quote_id" : quote_id
-        }
-
-        flash('Removed from favorites!','success')
-        return connectToMySQL('wishlist2').query_db(query,data)
-
-
     #Borra un quote creado por el usuario
     @classmethod
-    def delete(cls,id,user_id):
+    def delete_from_wishlist(cls,product_id,wishlist_id):
 
-        query = '''DELETE FROM quotes where id = %(id)s; '''
+        query = '''DELETE FROM wishlist_products 
+                    where product_id = %(product_id)s
+                    and wishlist_id = %(wishlist_id)s; '''
 
         data = {
-            "id": id
+            "product_id": product_id,
+            "wishlist_id": wishlist_id,
         }
 
-        flash('Deleted quote!','success')
+        flash('Deleted product from wishlist!','success')
         return connectToMySQL('wishlist2').query_db(query,data)
     
 

@@ -4,13 +4,14 @@
 {%block body%}
 <div class="container">
     {%if user.id != wlist.creator.id and wlist.privacy == 'private' and permission != True%}
-    <div class="private-wishlist-title">THIS IS A PRIVATE WISHLIST</div>
-    <div class="wishlist-creator">Created by: {{wlist.creator.first_name}} {{wlist.creator.last_name}}</div>
+    <h3 style="font-size: 5rem;" class="private-wishlist-title">This is a private Wishlist</h3>
+    <p class="wishlist-creator mb-3">Created by: {{wlist.creator.first_name}} {{wlist.creator.last_name}}</p>
         {%if requested == True%}
-        <p>Hmm... Seems like you already requested to be in this list!</p>
+        <a href="#" class="join-wishlist btn btn-primary mb-2" style="background-color: brown;">Pending aproval...</a>
+        <p style="color: brown;">Hmm... Seems like you already requested to be in this list!</p>
         {%else%}
-        <div class="private-wishlist-msg"> OH! It looks like this cwishlist is private, would you like to join it?</div>
-        <a href="/join/{{wlist.id}}/" class="join-wishlist">Request to join</a>
+        <div class="private-wishlist-msg"> Oh! It looks like this wishlist is private, would you like to join it?</div>
+        <a href="/join/{{wlist.id}}/" class="join-wishlist btn btn-request mb-3">Request to join</a>
         {%endif%}
     {%else%}
     <div class="row">
@@ -18,18 +19,18 @@
             <div class="sl-wishlist-box">
                 <img class="sl-img-block" src="{{wlist.img_url}}"></img>
                 <div class="wishlist-main-inf-cont">
-                    <h2  class="wlist-name">{{wlist.name.upper()}}</h2>
+                    <h2  class="wlist-name">{{wlist.name}}</h2>
                     <p class="wlist-description">{{wlist.description}}</p>
-                    <p>Created by: <a href="/profile/{{wlist.creator.id}}"> {{wlist.creator.first_name}} {{wlist.creator.last_name}}</a></p>
-                    <p  class="wlist-end-date">{{wlist.text}}</p>
-                    <p>
+                    <p class="wlist-description">Created by: <a href="/profile/{{wlist.creator.id}}"> {{wlist.creator.first_name}} {{wlist.creator.last_name}}</a></p>
+                    <p  class="wlist-description">{{wlist.text}}</p>
+                    <p class="wlist-description">
                         This wishlist ends on... {{wlist.end_date}}
                     </p>
                 </div>
             </div>
             <div class="wlist-products-box">
                 {%for product in wlist.products%}
-                <div class="product-box">
+                <div class="product-box sl-product-box">
                     <div class="box-img">
                         <img src="{{product.img_url}}" alt="{{product.product_name}}" class="product-img" >
                     </div>
@@ -67,17 +68,17 @@
         <div class="col-4 wishlist-features">
             {%if wlist.creator.id == user.id%}
             <div class="add-sl-product">
-                <a href="/create-product/{{wlist.id}}" class="add-sl-prod-btn">+ Add a product</a>
+                <a href="/create-product/{{wlist.id}}" class="btn btn-primary" style="padding:1rem; font-size:1.2rem">+ Add a product</a>
             </div>
             <div class="participant-requests">
                 <div class="part-req-box">
                     <h3 class="requests-title">Wishlist requests:</h3>
                     {%if wlist.requests|length == 0%}
-                    <p>You have no requests</p>
+                    <p class="wlist-description">You have no requests</p>
                     {%else%}
                         {%for request in wlist.requests%}
                         <div class="request-box">
-                            <p class="request-user">{{request.first_name}} {{request.last_name}}</p>
+                            <p class="request-user wlist-description">{{request.first_name}} {{request.last_name}}</p>
                             <a href="/respond-request/{{request.id}}/{{wlist.id}}/accepted" class="accept-request">Accept</a>
                             <a href="/respond-request/{{request.id}}/{{wlist.id}}/declined" class="decline-request">Decline</a>
                         </div>
@@ -89,18 +90,21 @@
                     <h3 class="requests-title">Participants in this wishlist: </h3>
                     {%if wlist.participants|length == 0%}
                     <p>No participants in this list</p>
-                        {%if user.id != wlist.creator.id and permission != True %}
-                        <a href="/join/{{wlist.id}}/" class="join-wishlist">Request to join</a>
-                        {%endif%}
                     {%endif%}
                     {%for participant in wlist.participants%}
                     <div class="added-participant">
                         <ion-icon name="person-circle-outline"></ion-icon>
-                        <a href="/profile/{{participant.id}}" class="request-user">{{participant.first_name}} {{participant.last_name}}</a>
+                        <a href="/profile/{{participant.id}}" class="request-user wlist-description">{{participant.first_name}} {{participant.last_name}}</a>
                         {%if participant.id == user.id%}
                         <a href="/leave/{{wlist.id}}/{{user.id}}" class="sl-leave-link">Leave list</a>
                         {%endif%}
                     </div>
+                    {%if user.id != wlist.creator.id and permission != True and requested != True%}
+                        <a href="/join/{{wlist.id}}/" class="join-wishlist btn btn-request">Request to join</a>
+                    {%endif%}
+                    {%if requested%}
+                        <a href="#" class="join-wishlist btn btn-primary" style="background-color: brown;">Pending aproval...</a>
+                    {%endif%}
                     {%endfor%}
                 </div>
             </div>

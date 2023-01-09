@@ -1,0 +1,30 @@
+{% extends 'landing.html'%}
+{% block body %}
+<h3 style="font-size: 5rem;">Welcome!</h3>
+<p class="wlist-description">Already have an account? <a href="/login">Log in</a></p>
+<div class="col-5">
+    <form class="form-cont" action="/register" method="POST">
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <input type="email" id="email" class="form-control" name="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="last_name" class="form-label">First name:</label>
+            <input type="text" id="first_name" class="form-control" name="first_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="last_name" class="form-label">Last name:</label>
+            <input type="text" id="last_name" class="form-control" name="last_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password:</label>
+            <input type="password" id="password" class="form-control" name="password" required>
+        </div>
+        <div class="mb-3">
+            <label for="confirm_password" class="form-label">Confirm password:</label>
+            <input type="password" id="confirm_password" class="form-control" name="confirm_password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>
+{% endblock %}

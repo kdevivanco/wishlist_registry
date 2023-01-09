@@ -7,19 +7,19 @@ from app.controllers.images import UploadForm,photos
 from app import app
 import pdb
 from flask import flash
-
+from datetime import date
 from app.models.products import Product
 
 
 lists = Blueprint('lists', __name__, template_folder='templates')
 
-
 def repited_variables(): #cree una funcion para estas dos variables que se repiten a lo largo de todas las rutas, parano tener que escribirlas de nuevo
-    log = 'logout'
+    log = 'Log out'
     user = session['user']
     return (log,user)
 
-#CARGA EL lists
+
+#DASHBOARD
 @lists.route('/dashboard')
 @login_required
 def show_lists():
@@ -27,6 +27,7 @@ def show_lists():
     user_id = user['id']
     creator = Wishlist.get_all_from_user(user_id)
     other_products = Product.get_all_but_user(user_id)
+    
     return render_template('dashboard.html',log = log,user = user,creator = creator, op = other_products)
 
 
@@ -44,6 +45,10 @@ def show_create(user_id):
 @login_required
 def create_wlist(user_id):
     log,user = repited_variables()
+    
+    if not Wishlist.validate(request.form):
+        return redirect(f'/create-list/{user_id}')
+    
     wlist = Wishlist.create_new(request.form,user_id)
     list_id = wlist.id
     wlist_path = f'/list/{list_id}'
@@ -105,7 +110,7 @@ def buy_product(wishlist_id,product_id,participant_id):
 
     return redirect (f'/list/{wishlist_id}')
 
-
+#mostrar editar
 @lists.route('/edit/<wishlist_id>')
 @login_required
 def show_edit_wlist(wishlist_id):
@@ -117,6 +122,7 @@ def show_edit_wlist(wishlist_id):
     
     return render_template('edit_wishlist.html',user=user,wlist = wlist)
 
+#editar
 @lists.route('/edit/<wishlist_id>', methods=['POST'])
 @login_required
 def edit_wishlist(wishlist_id):
@@ -126,8 +132,7 @@ def edit_wishlist(wishlist_id):
         flash('This is not your wishlist!','error')
         return redirect('/dashboard')
     Wishlist.edit(wishlist_id, request.form)
-
-
+    
     return redirect(f'/list/{wishlist_id}')
 
 
@@ -144,66 +149,17 @@ def leave_list(list_id,user_id):
     return redirect(f'/list/{list_id}')
 
 
-
-#EDITAR QUOTE - MOSTRAR PAGINA DE EDICION
-@lists.route('/edit/<quote_id>')
+@lists.route('/search',methods=['POST'])
 @login_required
-def show_edit(quote_id):
+def search():
+    list_id = int(request.form['list_id'])
     log,user = repited_variables()
+    wlist = Wishlist.classify(list_id)
+    if not wlist:
+        flash('No wishlist with that id','error')
+        return redirect('/dashboard')
 
-    #Protecion de ruta:
-    if not Quote.route_protection(quote_id,user['id']):
-        return redirect('/lists')
-    
-    #Creamos el objeto quote del quote a mostrar
-    quote = Quote.classify_quote(quote_id) #retorna el objeto  de clase quote
-
-    return render_template('edit.html', quote = quote,log= log)
-
-
-#EDITAR QUOTE - Method post: pasar datos a la base de datos
-@lists.route('/edit/<quote_id>', methods=['POST'])
-@login_required
-def edit_quote(quote_id):
-    log,user = repited_variables()
-
-    #Validacion del formulario
-    if not Quote.validate(request.form):
-        path = f'/edit/{quote_id}'
-        return redirect(path)
-    
-    #Edita el quote:
-    user_id = user['id']
-    Quote.edit(request.form,quote_id)
-
-
-    return redirect('/lists')
-
-#Remove from favorites 
-@lists.route('/remove/<quote_id>')
-@login_required
-def remove(quote_id):
-    log,user = repited_variables()
-
-    Quote.remove_from_favorites(user['id'],quote_id)
-
-    return redirect('/lists')
-
-
-#Delete quote
-@lists.route('/delete/<quote_id>')
-@login_required
-def delete(quote_id):
-
-    user = session['user']
-    
-    if not Quote.route_protection(quote_id,user['id']): #Proteccion de ruta
-        return redirect('/lists')
-
-    Quote.delete(quote_id,user['id']) #le paso el user id para asegurarme de que el que tenga permiso para borrar sea solo el creador
-
-    return redirect('/lists')
-
+    return redirect(f'/list/{list_id}')
 
 
 

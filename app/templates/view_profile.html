@@ -4,17 +4,21 @@
     <div class="dashboard-profile-section">
         <div class="profile-box row">
             <div class="user-pic-info col-4">
-                <img class="profile-pic" src="{{creator.profile_url}}" alt="profile_picture">
+                {%if not this_user.profile_url or this_user.profile_url == ''%}
+                <ion-icon name="person-circle-outline" style="font-size:8rem;"></ion-icon>
+                {%else%}
+                <img class="profile-pic" src="{{this_user.profile_url}}" alt="profile_picture">
+                {%endif%}
             </div>
             <div class="user-other-info col-8">
                 <h2 class="user-name-info">
-                    {{creator.first_name}} {{creator.last_name}}
+                    {{this_user.first_name}} {{this_user.last_name}}
                 </h2>
                 <div class="user-main-info">
                     <p>Wishlists: {{creator.list_count}}</p>
                     <p>Products: {{creator.created_product_count}} </p>
                 </div>
-                {%if user.id == creator.id%}
+                {%if user.id == this_user.id%}
                 <div class="user-links">
                     <a href="/edit-profile/{{user.id}}" >
                         <ion-icon name="cog-outline" style="font-size: 1.5rem;" ></ion-icon>
@@ -28,10 +32,15 @@
     </div>
     <div class="row">
 
-        <div class="wishlist-section-profile col-7">
+        <div class="wishlist-section-profile col-6">
             <div class="user-main-saved">
                 <div class="user-main-lists">
                     <h3 class="user-main-subtitle">Wishlists</h3>
+                    {%if creator.lists|length == 0%}
+                    <div class="wishlist-box mb-2 p-4 bg-light">
+                        <p>No wishlists yet...</p>
+                    </div>
+                    {%endif%}
                     <!--For Loop con wishlists del usuario-->
                     {%for list in creator.lists%}
                     <div class="wishlist-box">
@@ -48,6 +57,11 @@
                 </div>
                 <div class="user-participating-lists">
                     <h3 class="user-main-subtitle">Participating in</h3>
+                    {%if creator.participating_lists|length == 0%}
+                    <div class="wishlist-box mb-2 p-4 bg-light">
+                        <p>No wishlists yet...</p>
+                    </div>
+                    {%endif%}
                     {%for list in creator.participating_lists%}
                     <div class="wishlist-box">
                         <a href="/list/{{list.id}}" class="list-img-link">
@@ -66,11 +80,16 @@
                 </div>
             </div>
         </div>
-        <div class="product-section-profile col-4">
+        <div class="product-section-profile col-6">
             <h3 class="user-main-subtitle">Created Products</h3>
+            {%if not user_products or user_products|length == 0%}
+                    <div class="wishlist-box mb-2 p-4 bg-light">
+                        <p>No products yet...</p>
+                    </div>
+            {%endif%}
             <div class="profile-product-row">
                 {%for product in user_products%}
-                <div class="product-box">
+                <div class="product-box sl-product-box">
                     <div class="box-img">
                         <img src="{{product.img_url}}" alt="product_picture" class="product-pic"></img>
                     </div>

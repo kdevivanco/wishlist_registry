@@ -15,15 +15,23 @@
     {% block styles %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar bg-dark mb-4">
+    <nav class="navbar mb-4">
         <div class="container-fluid">
-            <a href="/dashboard">
+            <a href="/dashboard" style="flex-grow: 1;">
                 <span class="navbar-brand mb-0 h1 text-light">Registry.</span>
             </a>
             {%if user%}
-            <a href="/profile/{{user.id}}" class="user-name-nav">{{user.first_name}}</a>
+            <form action="/search" style="flex-grow: 1;" method="post">
+                <input class="btn btn-secondary wlist-description m-0" type="text" name="list_id" placeholder="Enter list id"required>
+                <button class="btn btn-secondary"type="submit"><ion-icon name="search-outline"></ion-icon></button>
+            </form>
+            <a href="/profile/{{user.id}}" class="user-name-nav wlist-description">{{user.first_name}}</a>
+            <a href="/edit-profile/{{user.id}}" class="user-name-nav">
+                <ion-icon name="cog-outline" style="font-size: 1.5rem; color:white" ></ion-icon>
+            </a>
             {%endif%}
-            <a href="/log" class="btn btn-light">{{log}}</a>
+            
+            <a href="/logout" class="btn btn-primary wlist-description">{{log}}</a>
         </div>
     </nav>
     {% block body %}

@@ -1,7 +1,6 @@
 {% extends '1base.html' %}
 {%block body%}
-<div class="container">
-    <h2 class="welcome-text"> Welcome to Registry</h2>
+<div class="container pt-5">
     <div class="row">
         <div class="col-7 dashboard-lists-section">
             <div class="add-section">
@@ -17,7 +16,7 @@
                 <div class="other-post-box">
                     <img src="{{product.img_url}}" alt="product_picture" class="product-pic"></img>
                     <p class="post-title">{{product.product_name}}</p>
-                    <p class="post-creator">Created by: <a href="/user/{{product.creator.id}}">{{product.creator.first_name}} {{product.creator.last_name}}</a></p>
+                    <p class="post-creator">Created by: <a href="/profile/{{product.creator.id}}">{{product.creator.first_name}} {{product.creator.last_name}}</a></p>
                     <a href="{{product.link}}" target="_blank" class="product-link">See in shop</a>
                     <div class="product-add">
                         <a href="/add/{{product.id}}"><ion-icon name="heart-circle-outline" class="add-icon"></ion-icon> </a>
@@ -31,7 +30,11 @@
             <div class="dashboard-profile-section">
                 <div class="profile-box row">
                     <div class="user-pic-info col-4">
+                        {%if not user.profile_url or user.profile_url == ''%}
+                        <ion-icon name="person-circle-outline" style="font-size:8rem;"></ion-icon>
+                        {%else%}
                         <img class="profile-pic" src="{{user.profile_url}}" alt="profile_picture">
+                        {%endif%}
                     </div>
                     <div class="user-other-info col-8">
                         <h2 class="user-name-info">
@@ -58,6 +61,11 @@
             <div class="user-main-saved">
                 <div class="user-main-lists">
                     <h3 class="user-main-subtitle">Your Wishlists</h3>
+                    {%if creator.lists|length == 0%}
+                    <div class="wishlist-box mb-2 p-4 bg-light">
+                        <p>You dont have any wishlists yet...</p>
+                    </div>
+                    {%endif%}
                     <!--For Loop con wishlists del usuario-->
                     {%for list in creator.lists%}
                     <div class="wishlist-box">
@@ -74,6 +82,11 @@
                 </div>
                 <div class="user-participating-lists">
                     <h3 class="user-main-subtitle">Wishlist you're in</h3>
+                    {%if creator.participating_lists|length == 0%}
+                    <div class="wishlist-box mb-2 p-4 bg-light">
+                        <p>You dont have any wishlists yet...</p>
+                    </div>
+                    {%endif%}
                     <!--For Loop con wishlists del usuario-->
                     {%for list in creator.participating_lists%}
                     <div class="wishlist-box">
