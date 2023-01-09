@@ -38,8 +38,6 @@ class Product:
     def route_protection(cls,id,user_id):
         pass
 
-    #Inserta el nuevo quote a la base de datos
-    #crea un objeto de clase Quote con un atributo creator de la clase User
     @classmethod 
     def create(cls,form_data,creator_id,wishlist_id):
         
@@ -115,9 +113,7 @@ class Product:
         products = []
         results = connectToMySQL('wishlist2').query_db(query,data)
         if len(results) == 0 or results == False:
-            #flash('Something went wrong', 'error')
-            print('no quote matches id')
-            return products
+            return products #lista vacia
         
         result = results[0]
         
@@ -168,7 +164,7 @@ class Product:
 
         return
 
-    #Devuelve todos los quotes favoritos del usuario
+    #Devuelve todos los productos creados por el usuario
     @classmethod
     def get_all_from_user(cls,creator_id): 
         
@@ -198,7 +194,6 @@ class Product:
     @classmethod
     def get_all_but_user(cls,creator_id): 
         
-        #query anidado para no tomar en cuenta los ids de los quotes favoritos del usuario
         query = '''
                 SELECT products.id FROM products
                 WHERE products.creator_id != %(creator_id)s;'''
@@ -207,7 +202,6 @@ class Product:
             'creator_id' : creator_id
         }
 
-        #results es una lista de todos los ids de los quotes no-favoritos del usuario
         results = connectToMySQL('wishlist2').query_db(query,data)
         other_products = []
 
@@ -252,7 +246,7 @@ class Product:
         flash('Product edited','success')
         return True
 
-    #Borra un quote creado por el usuario
+    #Borra un producto en un wishlist creado por el usuario
     @classmethod
     def delete_from_wishlist(cls,product_id,wishlist_id):
 

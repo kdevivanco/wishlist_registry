@@ -70,13 +70,13 @@ class Wishlist:
             }
 
         list_id = connectToMySQL('wishlist2').query_db(query,data)  
-        wlist = Wishlist.classify(list_id) #Llama a la funcion que vuelve Quote en una clase con attrb creator de clase User
+        wlist = Wishlist.classify(list_id) #Llama a la funcion que vuelve Wishlist en una clase con attrb creator de clase User
         
         return wlist
 
-    #Construye el objeto Quote, este metodo es llamado por create_new
+    #Construye el objeto Wishlist
     @classmethod
-    def classify(cls,id): #construye quote como objeto de clase Quote
+    def classify(cls,id): 
         
         query = '''SELECT * FROM wishlists 
                 join users on users.id = wishlists.creator_id
@@ -93,7 +93,7 @@ class Wishlist:
         
         result = results[0]
         wlist = cls(result)
-        creator = User({ #atributo de quote
+        creator = User({ 
             'id': result['users.id'],
             'first_name': result['first_name'],
             'last_name': result['last_name'],
@@ -115,7 +115,6 @@ class Wishlist:
         return wlist
 
     #TODOS LOS WISHLSITS DE UN USUARIO: 
-
     @classmethod
     def get_all_from_user(cls,creator_id):
         query = '''select id from wishlists where creator_id = %(creator_id)s'''
@@ -196,7 +195,7 @@ class Wishlist:
 
     #Crea un request de un usuario no creador para unirse al wishlist
     @classmethod
-    def request_to_join(cls,participant_id,wishlist_id): #inserta el viaje a la tabla all_quotes
+    def request_to_join(cls,participant_id,wishlist_id):
         query = '''
                 INSERT INTO participants ( participant_id , wishlist_id, status ) 
                 VALUES ( %(participant_id)s , %(wishlist_id)s, "requested");
@@ -246,13 +245,13 @@ class Wishlist:
             return participating_lists #evita que la lista itere si esque esta vacia para evitar un error
         
         for wishlist_id in results:
-            wlist = Wishlist.classify(wishlist_id['wishlist_id']) #clasifica cada quote: cada id esta en un diccionario por eso se le pasa esa variable
-            participating_lists.append(wlist) #lo agrega a la lista de favoritos
+            wlist = Wishlist.classify(wishlist_id['wishlist_id']) 
+            participating_lists.append(wlist) 
         
         return participating_lists
     
 
-    #dejar de participar de una lista:
+    #Dejar de participar de una lista:
     @classmethod
     def leave(cls,participant_id,wishlist_id):
         query = '''
@@ -269,62 +268,7 @@ class Wishlist:
 
         return results
 
-
-    #Devuelve todos los quotes que no son favoritos
-    @classmethod
-    def get_quotable_quotes(cls,id): 
-        
-        #query anidado para no tomar en cuenta los ids de los quotes favoritos del usuario
-        query = '''
-                SELECT quotes.id FROM quotes
-                WHERE quotes.id not in 
-                (SELECT quote_id FROM favorites
-                JOIN quotes on quotes.id = favorites.quote_id
-                WHERE user_id = %(user_id)s)
-                order by quotes.created_at desc;'''
-
-        data = {
-            'user_id' : id
-        }
-
-        #results es una lista de todos los ids de los quotes no-favoritos del usuario
-        results = connectToMySQL('wishlist2').query_db(query,data)
-        quotable_quotes = []
-
-        if quotable_quotes == 0:
-            return quotable_quotes #evita que la lista itere si esque esta vacia para evitar un error
-        
-        for quote_id in results:
-            quote = Quote.classify_quote(quote_id['id'])
-            quotable_quotes.append(quote)
-        
-        return quotable_quotes
-
-
-    #Devuelve todos los quotes creados por un usuario, usando su id
-    @classmethod
-    def get_created_quotes(cls,user_id): 
-        
-        #selecciona todos los ids de los quotes escritos por el usuario
-        query = '''
-                SELECT quotes.id FROM quotes
-                JOIN users on users.id = quotes.creator_id
-                where creator_id = %(creator_id)s;'''
-
-        data = {
-            'creator_id' : user_id
-        }
-
-        #results es una lista de todos los ids de los quotes creados por el usuario
-        results = connectToMySQL('wishlist2').query_db(query,data)
-        created_quotes = []
-        for quote_id in results:
-            quote = Quote.classify_quote(quote_id['id'])
-            created_quotes.append(quote)
-        
-        return created_quotes
-    
-    #Edita un quote 
+    #Edita una lista 
     @classmethod
     def edit(cls,id,form_data):
 
@@ -356,35 +300,4 @@ class Wishlist:
         flash('Wishlist edited','success')
         return True
 
-    #Deshace la relacion favoritos: borra la fila que corresponde al favorito que une al user con el quote
-    @classmethod
-    def remove_from_favorites(cls,user_id,quote_id):
-        query = '''DELETE FROM favorites 
-        where user_id = %(user_id)s
-        and  quote_id = %(quote_id)s; '''
-
-        data = {
-            "user_id": user_id,
-            "quote_id" : quote_id
-        }
-
-        flash('Removed from favorites!','success')
-        return connectToMySQL('wishlist2').query_db(query,data)
-
-
-    #Borra un quote creado por el usuario
-    @classmethod
-    def delete(cls,id,user_id):
-
-        query = '''DELETE FROM quotes where id = %(id)s; '''
-
-        data = {
-            "id": id
-        }
-
-        flash('Deleted quote!','success')
-        return connectToMySQL('wishlist2').query_db(query,data)
     
-
-
-
